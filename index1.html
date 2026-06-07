@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudharshan S | Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;
+  --surface:#111118;
+  --surface2:#18181f;
+  --border:#ffffff12;
+  --border2:#ffffff20;
+  --text:#f0eff8;
+  --muted:#9997b2;
+  --accent:#6c63ff;
+  --accent2:#ff6584;
+  --accent3:#43e8a0;
+  --font-head:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--font-head);font-size:1.1rem;font-weight:800;letter-spacing:.05em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+
+section{position:relative;z-index:1}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 3rem 4rem;max-width:1100px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent3);font-weight:500;margin-bottom:1.5rem}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--accent3)}
+.hero h1{font-family:var(--font-head);font-size:clamp(3rem,8vw,6.5rem);font-weight:800;line-height:1.0;margin-bottom:1.5rem;letter-spacing:-.02em}
+.hero h1 span{display:block}
+.hero h1 .name-accent{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 60%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-desc{font-size:1.1rem;color:var(--muted);max-width:560px;line-height:1.8;margin-bottom:2.5rem;font-weight:300}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 2rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer;text-decoration:none;transition:transform .2s,opacity .2s}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 2rem;background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:6px;font-family:var(--font-body);font-size:.9rem;font-weight:500;cursor:pointer;text-decoration:none;transition:border-color .2s,background .2s}
+.btn-ghost:hover{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.hero-stats{display:flex;gap:3rem;margin-top:3.5rem;padding-top:3rem;border-top:1px solid var(--border)}
+.stat{display:flex;flex-direction:column;gap:.3rem}
+.stat-num{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--text)}
+.stat-label{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+.blob{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-100px;right:-100px;pointer-events:none;z-index:0;animation:blobFloat 8s ease-in-out infinite}
+.blob2{background:radial-gradient(circle,rgba(255,101,132,.08) 0%,transparent 70%);bottom:0;left:-200px;top:auto;animation-delay:-4s}
+@keyframes blobFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,40px)}}
+
+/* ABOUT */
+.section-wrap{max-width:1100px;margin:0 auto;padding:6rem 3rem}
+.section-label{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+.section-label::before{content:'';width:32px;height:1px;background:var(--accent)}
+.section-title{font-family:var(--font-head);font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:2rem;letter-spacing:-.02em}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.about-text{color:var(--muted);line-height:1.9;font-size:1rem;font-weight:300}
+.about-text p+p{margin-top:1rem}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.skill-chip{padding:.5rem 1rem;border:1px solid var(--border);border-radius:4px;font-size:.82rem;color:var(--muted);transition:border-color .2s,color .2s,background .2s;cursor:default}
+.skill-chip:hover{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.06)}
+
+/* PROJECTS */
+.projects-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem}
+.project-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:2rem;position:relative;overflow:hidden;transition:border-color .3s,transform .3s;cursor:default}
+.project-card:hover{border-color:var(--accent);transform:translateY(-4px)}
+.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .3s}
+.project-card:hover::before{opacity:1}
+.project-num{font-family:var(--font-head);font-size:3.5rem;font-weight:800;color:var(--border2);position:absolute;top:1.5rem;right:1.75rem;line-height:1}
+.project-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.tag{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .75rem;border-radius:3px;font-weight:500}
+.tag-purple{background:rgba(108,99,255,.15);color:#a099ff;border:1px solid rgba(108,99,255,.25)}
+.tag-pink{background:rgba(255,101,132,.12);color:#ff8fa6;border:1px solid rgba(255,101,132,.2)}
+.tag-green{background:rgba(67,232,160,.1);color:#43e8a0;border:1px solid rgba(67,232,160,.18)}
+.tag-amber{background:rgba(255,180,50,.1);color:#ffb432;border:1px solid rgba(255,180,50,.18)}
+.project-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin-bottom:.75rem;line-height:1.3}
+.project-desc{font-size:.875rem;color:var(--muted);line-height:1.75;font-weight:300}
+.project-card.wide{grid-column:span 2}
+
+/* ACHIEVEMENTS */
+.achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3rem}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;transition:border-color .2s}
+.ach-card:hover{border-color:var(--border2)}
+.ach-icon{font-size:1.5rem;margin-bottom:1rem}
+.ach-place{font-family:var(--font-head);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.4rem}
+.place-gold{color:#f9c74f}
+.place-bronze{color:#cd7f32}
+.place-part{color:var(--muted)}
+.ach-name{font-size:.95rem;font-weight:500;margin-bottom:.3rem}
+.ach-org{font-size:.78rem;color:var(--muted)}
+
+/* CERTIFICATIONS */
+.certs-row{display:flex;gap:1.25rem;margin-top:2.5rem;flex-wrap:wrap}
+.cert-card{flex:1;min-width:200px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.cert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cert-dot.purple{background:var(--accent)}
+.cert-dot.blue{background:#4fc3f7}
+.cert-dot.green{background:var(--accent3)}
+.cert-name{font-size:.9rem;font-weight:500;margin-bottom:.2rem}
+.cert-by{font-size:.75rem;color:var(--muted)}
+
+/* CONTACT */
+.contact-section{background:var(--surface);border-top:1px solid var(--border)}
+.contact-inner{max-width:700px;text-align:center;margin:0 auto}
+.contact-inner .section-label{justify-content:center}
+.contact-inner .section-label::before{display:none}
+.contact-links{display:flex;justify-content:center;gap:1.25rem;margin-top:2.5rem;flex-wrap:wrap}
+.contact-link{display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.5rem;border:1px solid var(--border2);border-radius:6px;color:var(--muted);text-decoration:none;font-size:.85rem;transition:border-color .2s,color .2s,background .2s}
+.contact-link:hover{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.07)}
+
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.78rem;letter-spacing:.05em;border-top:1px solid var(--border);background:var(--bg);position:relative;z-index:1}
+
+.fade-up{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.fade-up.visible{opacity:1;transform:none}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{gap:1.5rem}
+  .hero{padding:7rem 1.5rem 3rem}
+  .section-wrap{padding:4rem 1.5rem}
+  .about-grid,.projects-grid{grid-template-columns:1fr}
+  .project-card.wide{grid-column:span 1}
+  .achievements-grid{grid-template-columns:1fr 1fr}
+  .hero-stats{gap:2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="blob"></div>
+<div class="blob blob2"></div>
+
+<nav>
+  <div class="nav-logo">SS</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">Available for Internship</div>
+  <h1>
+    <span>Hello, I'm</span>
+    <span class="name-accent">Sudharshan S</span>
+    <span style="font-size:.55em;font-weight:400;color:var(--muted);font-family:var(--font-body)">CS Engineer &nbsp;·&nbsp; Developer &nbsp;·&nbsp; Problem Solver</span>
+  </h1>
+  <p class="hero-desc">Computer Science & Engineering student at KPRIET with a 9.5 CGPA. I build intelligent systems, interactive web platforms, and data-driven dashboards.</p>
+  <div class="hero-ctas">
+    <a href="#projects" class="btn-primary">View My Work</a>
+    <a href="#contact" class="btn-ghost">Get in Touch</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">9.5</span>
+      <span class="stat-label">CGPA</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">4+</span>
+      <span class="stat-label">Projects</span>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-wrap">
+    <div class="fade-up">
+      <div class="section-label">About Me</div>
+      <h2 class="section-title">Engineering ideas<br>into reality</h2>
+    </div>
+    <div class="about-grid fade-up">
+      <div>
+        <div class="about-text">
+          <p>I'm a second-year B.E Computer Science student at KPR Institute of Engineering and Technology, Tiruppur. My passion lies at the intersection of software development, data analytics, and artificial intelligence.</p>
+          <p>I enjoy building practical solutions to real-world problems — from banking systems to AI-powered detection platforms. I'm always looking for opportunities to push my skills further through hackathons, technical events, and projects.</p>
+          <p>Currently seeking an internship where I can contribute, learn, and grow in a professional engineering environment.</p>
+        </div>
+      </div>
+      <div>
+        <div style="margin-bottom:1.25rem;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Technical Stack</div>
+        <div class="skills-grid">
+          <div class="skill-chip">Python</div>
+          <div class="skill-chip">JavaScript</div>
+          <div class="skill-chip">HTML5 / CSS3</div>
+          <div class="skill-chip">Bootstrap</div>
+          <div class="skill-chip">Power BI</div>
+          <div class="skill-chip">DAX</div>
+          <div class="skill-chip">Tableau</div>
+          <div class="skill-chip">C Language</div>
+          <div class="skill-chip">OOP</div>
+          <div class="skill-chip">AI / ML</div>
+          <div class="skill-chip">Data Visualisation</div>
+          <div class="skill-chip">Excel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="projects-section">
+  <div class="section-wrap">
+    <div class="fade-up">
+      <div class="section-label">Projects</div>
+      <h2 class="section-title">Things I've built</h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card fade-up">
+        <div class="project-num">01</div>
+        <div class="project-tags">
+          <span class="tag tag-purple">Python</span>
+          <span class="tag tag-pink">AI</span>
+          <span class="tag tag-green">Bootstrap</span>
+        </div>
+        <div class="project-title">AI Forest Fire Detection Platform</div>
+        <div class="project-desc">A responsive web awareness platform centred on AI-powered forest fire detection. Built with Bootstrap for a polished, multi-section layout. Presented at institution level as part of a campus environmental initiative.</div>
+      </div>
+      <div class="project-card fade-up">
+        <div class="project-num">02</div>
+        <div class="project-tags">
+          <span class="tag tag-purple">Python</span>
+          <span class="tag tag-amber">OOP</span>
+        </div>
+        <div class="project-title">Banking Management System</div>
+        <div class="project-desc">Console-based banking application supporting account creation, deposits, withdrawals, and balance enquiry. Applied OOP principles with robust input validation and error handling.</div>
+      </div>
+      <div class="project-card wide fade-up">
+        <div class="project-num">03</div>
+        <div class="project-tags">
+          <span class="tag tag-green">HTML</span>
+          <span class="tag tag-purple">Bootstrap</span>
+          <span class="tag tag-amber">JavaScript</span>
+        </div>
+        <div class="project-title">Optical Physics Educational Website</div>
+        <div class="project-desc">Multi-page responsive educational website explaining core optical physics concepts. Used Bootstrap grid and components for a clean, mobile-friendly layout. Designed interactive visuals and structured content to improve learning accessibility.</div>
+      </div>
+      <div class="project-card wide fade-up">
+        <div class="project-num">04</div>
+        <div class="project-tags">
+          <span class="tag tag-pink">Power BI</span>
+          <span class="tag tag-amber">DAX</span>
+          <span class="tag tag-green">Excel</span>
+        </div>
+        <div class="project-title">Interactive Power BI Dashboards</div>
+        <div class="project-desc">Multiple interactive Power BI dashboards to analyse and present structured datasets. Leveraged DAX for calculated KPIs, time-intelligence measures, and dynamic filters. Translated raw Excel data into actionable visual insights with drill-through and slicer functionality.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="achievements">
+  <div class="section-wrap">
+    <div class="fade-up">
+      <div class="section-label">Recognition</div>
+      <h2 class="section-title">Achievements &<br>Competitions</h2>
+    </div>
+    <div class="achievements-grid fade-up">
+      <div class="ach-card">
+        <div class="ach-icon">🏆</div>
+        <div class="ach-place place-gold">1st Place</div>
+        <div class="ach-name">AlgoAuction Technical Event</div>
+        <div class="ach-org">KPRIET</div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-icon">🏆</div>
+        <div class="ach-place place-gold">1st Place</div>
+        <div class="ach-name">Digital Escape Room Technical Event</div>
+        <div class="ach-org">KPRIET</div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-icon">🥉</div>
+        <div class="ach-place place-bronze">3rd Place</div>
+        <div class="ach-name">Science Day Paper Presentation</div>
+        <div class="ach-org">KPRIET</div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-icon">💡</div>
+        <div class="ach-place place-part">Participant</div>
+        <div class="ach-name">International 360-3.0 Hackathon</div>
+        <div class="ach-org">KPRIET</div>
+      </div>
+      <div class="ach-card">
+        <div class="ach-icon">⚡</div>
+        <div class="ach-place place-part">Participant</div>
+        <div class="ach-name">Master the Prompt Event</div>
+        <div class="ach-org">KPRCAS</div>
+      </div>
+    </div>
+
+    <div style="margin-top:4rem" class="fade-up">
+      <div class="section-label">Certifications</div>
+      <div class="certs-row">
+        <div class="cert-card">
+          <div class="cert-dot purple"></div>
+          <div>
+            <div class="cert-name">Python Basics Certificate</div>
+            <div class="cert-by">HackerRank</div>
+          </div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-dot blue"></div>
+          <div>
+            <div class="cert-name">Overview of AI Concepts</div>
+            <div class="cert-by">Microsoft</div>
+          </div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-dot green"></div>
+          <div>
+            <div class="cert-name">Gen AI Mastermind</div>
+            <div class="cert-by">Outskill</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact-section">
+  <div class="section-wrap">
+    <div class="contact-inner fade-up">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Let's connect</h2>
+      <p style="color:var(--muted);line-height:1.8;font-weight:300">I'm actively looking for internship opportunities. Whether you have a project in mind or just want to say hi, my inbox is open.</p>
+      <div class="contact-links">
+        <a href="mailto:25cs267@kpriet.ac.in" class="contact-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+          25cs267@kpriet.ac.in
+        </a>
+        <a href="tel:+918248059005" class="contact-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 4.72 5.18 2 2 0 0 1 6.73 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L10.91 10.9a16 16 0 0 0 6.08 6.08l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          +91 82480 59005
+        </a>
+        <a href="https://sudharshan-s267.github.io/myportfolio/" class="contact-link" target="_blank">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Portfolio
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Designed & built by Sudharshan S &nbsp;·&nbsp; 2026</p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

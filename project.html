@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Sudharshan S</title>
+    
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/projects.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-bracket">&lt;</span>
+                    <span class="logo-text">Sudharshan</span>
+                    <span class="logo-bracket">/&gt;</span>
+                </a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link"><i class="fas fa-user"></i> About</a></li>
+                <li class="nav-item"><a href="skills.html" class="nav-link"><i class="fas fa-code"></i> Skills</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link active"><i class="fas fa-project-diagram"></i> Projects</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="nav-item resume-btn"><a href="assets/resume.pdf" class="btn-download" download><i class="fas fa-download"></i> Resume</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="projects-hero">
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up">
+                <h1 class="page-title">My <span class="gradient-text">Projects</span></h1>
+                <p class="page-subtitle">Showcasing my best work and innovative solutions</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter & Projects Section -->
+    <section class="projects-main">
+        <div class="container">
+            
+            <!-- Filter Buttons -->
+            <div class="filter-section" data-aos="fade-up">
+                <button class="filter-btn active" data-filter="all">
+                    All Projects
+                </button>
+                <button class="filter-btn" data-filter="web">
+                    Web Development
+                </button>
+                <button class="filter-btn" data-filter="python">
+                    Python
+                </button>
+                <button class="filter-btn" data-filter="analytics">
+                    Data Analytics
+                </button>
+                <button class="filter-btn" data-filter="ai">
+                    AI/ML
+                </button>
+            </div>
+            
+            <!-- Projects Grid -->
+            <div class="projects-grid">
+                
+                <!-- Project 1: AI Forest Fire Detection -->
+                <div class="project-card" data-tags="web,ai" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="project-image">
+                        <img src="assets/images/project-fire-detection.jpg" alt="AI Forest Fire Detection">
+                        <div class="project-overlay">
+                            <a href="https://your-project-link.com" target="_blank" class="overlay-btn" title="Live Demo">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <a href="https://github.com/yourusername/fire-detection" target="_blank" class="overlay-btn" title="View Code">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">AI/ML</span>
+                            <span class="tag">Web</span>
+                        </div>
+                        <h3>AI Forest Fire Detection System</h3>
+                        <p>
+                            A comprehensive web platform with AI-powered forest fire detection system. 
+                            Uses machine learning algorithms to detect forest fires from satellite imagery 
+                            and real-time data streams.
+                        </p>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <i class="fas fa-code-branch"></i>
+                                <span>15+ Commits</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-star"></i>
+                                <span>Featured Project</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>2023</span>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2: Power BI Sales Dashboard -->
+                <div class="project-card" data-tags="analytics" data-aos="zoom-in" data-aos-delay="150">
+                    <div class="project-image">
+                        <img src="assets/images/project-dashboard.jpg" alt="Sales Analytics Dashboard">
+                        <div class="project-overlay">
+                            <a href="#" class="overlay-btn" title="Live Dashboard">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <a href="#" class="overlay-btn" title="View Case Study">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag">Power BI</span>
+                            <span class="tag">DAX</span>
+                            <span class="tag">Analytics</span>
+                        </div>
+                        <h3>Sales Analytics Dashboard</h3>
+                        <p>
+                            Interactive Power BI dashboard analyzing 50,000+ sales records across 
+                            multiple regions. Features dynamic filters, KPIs, time-series analysis, 
+                            and actionable insights for business intelligence.
+                        </p>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <i class="fas fa-database"></i>
+                                <span>50K+ Records</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>6 Dashboards</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>2023</span>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3: Banking Management System -->
+                <div class="project-card" data-tags="python" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="project-image">
+                        <img src="assets/images/project-banking.jpg" alt="Banking System">
+                        <div class="project-overlay">
+                            <a href="https://github.com/yourusername/banking-system" target="_blank" class="overlay-btn" title="View Code">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="overlay-btn" title="Documentation">
+                                <i class="fas fa-book"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">OOP</span>
+                            <span class="tag">Database</span>
+                        </div>
+                        <h3>Banking Management System</h3>
+                        <p>
+                            A comprehensive banking application built with Python using OOP principles. 
+                            Supports account management, transactions, balance inquiry, and persistent 
+                            data storage with secure authentication.
+                        </p>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <i class="fas fa-code"></i>
+                                <span>2000+ Lines</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Secure</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>2022</span>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 4: Optical Physics Website -->
+                <div class="project-card" data-tags="web" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="project-image">
+                        <img src="assets/images/project-physics.jpg" alt="Physics Website">
+                        <div class="project-overlay">
+                            <a href="https://your-physics-site.com" target="_blank" class="overlay-btn" title="Visit Website">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <a href="https://github.com/yourusername/physics-website" target="_blank" class="overlay-btn" title="View Code">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                        <h3>Optical Physics Educational Website</h3>
+                        <p>
+                            A multi-page responsive educational website explaining core optical physics 
+                            concepts. Features interactive visuals, detailed explanations, and a 
+                            mobile-first design for accessibility.
+                        </p>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>Responsive</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-book"></i>
+                                <span>8 Pages</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>2022</span>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 5: Portfolio Website -->
+                <div class="project-card" data-tags="web" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="project-image">
+                        <img src="assets/images/project-portfolio.jpg" alt="Portfolio Website">
+                        <div class="project-overlay">
+                            <a href="#" class="overlay-btn" title="View Live">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <a href="https://github.com/yourusername/portfolio" target="_blank" class="overlay-btn" title="View Code">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                        <h3>Professional Portfolio Website</h3>
+                        <p>
+                            This modern, fully responsive portfolio website showcasing my work, skills, 
+                            and achievements. Features smooth animations, dark theme, and integrated 
+                            contact form with database backend.
+                        </p>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <i class="fas fa-star"></i>
+                                <span>Featured</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>Responsive</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>2024</span>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 6: To-Do Application -->
+                <div class="project-card" data-tags="web" data-aos="zoom-in" data-aos-delay="350">
+                    <div class="project-image">
+                        <img src="assets/images/project-todo.jpg" alt="Todo App">
+                        <div class="project-overlay">
+                            <a href="https://your-todo-app.com" target="_blank" class="overlay-btn" title="Try App">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <a href="https://github.com/yourusername/todo-app" target="_blank" class="overlay-btn" title="View Code">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">LocalStorage</span>
+                        </div>
+                        <h3>To-Do Task Manager Application</h3>
+                        <p>
+                            A modern task management application built with React. Features include task 
+                            creation, editing, deletion, categorization, and local storage persistence for 
+                            seamless user experience.
+                        </p>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <i class="fas fa-code"></i>
+                                <span>React Hooks</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Functional</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>2023</span>
+                            </div>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="projects-cta">
+        <div class="container">
+            <div class="cta-content" data-aos="zoom-in">
+                <h2>Have a Project Idea?</h2>
+                <p>Let's collaborate and bring your vision to life!</p>
+                <a href="contact.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-envelope"></i> Get In Touch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo"><h3>&lt;Sudharshan/&gt;</h3></div>
+                    <p>Building digital experiences with passion and precision.</p>
+                    <div class="social-links">
+                        <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/sudharshan-s-3197b03a7" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://twitter.com/yourusername" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="mailto:25cs267@kpriet.ac.in"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="skills.html">Skills</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Web Development</a></li>
+                        <li><a href="#">Data Analytics</a></li>
+                        <li><a href="#">Power BI</a></li>
+                        <li><a href="#">Python Development</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> Tiruppur, Tamil Nadu</li>
+                        <li><i class="fas fa-phone"></i> +91 82480 59005</li>
+                        <li><i class="fas fa-envelope"></i> 25cs267@kpriet.ac.in</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 <span class="gradient-text">Sudharshan S</span>. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Optical Physics Simulation Suite</title>
+<meta name="description" content="Interactive optical physics simulations: fiber optics, wave optics, light-matter interaction. 14 real-time modules."/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ══════════════════════════════════════════════
+   DESIGN SYSTEM
+══════════════════════════════════════════════ */
+:root{
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#0d1526;
+  --surface:rgba(30,41,59,0.75);--surface2:rgba(15,23,42,0.85);
+  --border:rgba(0,212,255,0.18);--border2:rgba(255,255,255,0.07);
+  --cyan:#00d4ff;--cyan-d:rgba(0,212,255,0.15);--cyan-g:rgba(0,212,255,0.35);
+  --violet:#7c3aed;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --sw:230px;--swc:62px;--th:52px;
+  --r:12px;--rs:8px;
+  --f:'Inter',sans-serif;--m:'JetBrains Mono',monospace;
+  --tr:all 0.3s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;min-width:1200px}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg3)}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,.2);border-radius:4px}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sw);min-width:var(--sw);height:100vh;background:rgba(13,21,38,.97);backdrop-filter:blur(20px);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:relative;z-index:100;transition:width .35s cubic-bezier(.4,0,.2,1),min-width .35s cubic-bezier(.4,0,.2,1);overflow:hidden;flex-shrink:0}
+.sidebar.col{width:var(--swc);min-width:var(--swc)}
+.sb-head{display:flex;align-items:center;gap:10px;padding:14px 12px;border-bottom:1px solid var(--border2);min-height:52px;flex-shrink:0}
+.hbg{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:6px;transition:var(--tr);flex-shrink:0}
+.hbg:hover{background:var(--cyan-d)}
+.hbg span{display:block;width:18px;height:2px;background:var(--text2);border-radius:2px;transition:var(--tr)}
+.hbg:hover span{background:var(--cyan)}
+.brand{display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;opacity:1;transition:opacity .25s}
+.sidebar.col .brand{opacity:0;pointer-events:none}
+.b-icon{font-size:20px;color:var(--cyan);text-shadow:0 0 12px var(--cyan);flex-shrink:0}
+.b-text{font-size:14px;font-weight:700;background:linear-gradient(135deg,var(--cyan),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.02em}
+.sb-lbl{font-size:9px;font-weight:700;letter-spacing:.15em;color:var(--cyan);padding:12px 14px 2px;white-space:nowrap;overflow:hidden;transition:opacity .25s}
+.sb-cnt{font-size:10px;color:var(--text3);padding:0 14px 8px;white-space:nowrap;overflow:hidden;transition:opacity .25s}
+.sidebar.col .sb-lbl,.sidebar.col .sb-cnt{opacity:0}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 8px}
+.ng-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--text3);padding:10px 6px 4px;white-space:nowrap;transition:opacity .25s}
+.sidebar.col .ng-lbl{opacity:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--rs);text-decoration:none;color:var(--text2);font-size:12px;transition:var(--tr);margin-bottom:2px;position:relative;overflow:hidden;white-space:nowrap;cursor:pointer}
+.nav-item:hover{background:var(--cyan-d);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(124,58,237,.15));color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(0,212,255,.3),0 0 16px rgba(0,212,255,.1)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--cyan);border-radius:0 3px 3px 0;box-shadow:0 0 8px var(--cyan)}
+.n-icon{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+.n-labels{display:flex;flex-direction:column;gap:1px;opacity:1;transition:opacity .2s;overflow:hidden}
+.sidebar.col .n-labels{opacity:0}
+.n-lbl{font-size:12px;font-weight:500;line-height:1.2}
+.n-sub{font-size:10px;color:var(--text3);line-height:1.2}
+.nav-item.active .n-sub{color:rgba(0,212,255,.6)}
+.sb-foot{padding:10px 14px;border-top:1px solid var(--border2);flex-shrink:0;font-size:9px;color:var(--text3);letter-spacing:.08em;white-space:nowrap;overflow:hidden;transition:opacity .25s}
+.sidebar.col .sb-foot{opacity:0}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:1}
+.topbar{height:var(--th);min-height:var(--th);background:rgba(13,21,38,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;z-index:50}
+.live{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--emerald)}
+.live-dot{width:7px;height:7px;background:var(--emerald);border-radius:50%;box-shadow:0 0 8px var(--emerald);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.tb-center{font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--text3)}
+.tb-right{display:flex;align-items:center;gap:16px}
+.th-toggle{display:flex;align-items:center;gap:8px;cursor:pointer}
+.th-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text3)}
+.sw{position:relative;width:36px;height:20px}
+.sw input{opacity:0;width:0;height:0}
+.sw-sl{position:absolute;inset:0;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;cursor:pointer;transition:var(--tr)}
+.sw-sl::before{content:'';position:absolute;width:14px;height:14px;background:var(--text3);border-radius:50%;top:2px;left:2px;transition:var(--tr)}
+.sw input:checked+.sw-sl{background:rgba(0,212,255,.2);border-color:var(--cyan)}
+.sw input:checked+.sw-sl::before{background:var(--cyan);transform:translateX(16px);box-shadow:0 0 8px var(--cyan)}
+.tb-ver{font-size:10px;color:var(--text3);letter-spacing:.08em}
+
+/* ── PAGES ── */
+.page{display:none;flex:1;overflow-y:auto;padding:24px 28px}
+.page.active{display:block}
+.page-sim{display:none;flex-direction:column;overflow:hidden;padding:0}
+.page-sim.active{display:flex}
+
+/* ── BUTTONS ── */
+.btn-p{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,var(--cyan),#0077ff);border:none;border-radius:var(--rs);color:#fff;font-family:var(--f);font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr);box-shadow:0 0 20px rgba(0,212,255,.35),0 4px 12px rgba(0,0,0,.3)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 0 32px rgba(0,212,255,.5),0 8px 20px rgba(0,0,0,.3)}
+.btn-s{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:transparent;border:1px solid var(--border);border-radius:var(--rs);color:var(--text2);font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer;transition:var(--tr)}
+.btn-s:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-d)}
+.btn-sm{padding:5px 12px;font-size:11px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:var(--f);transition:var(--tr)}
+.btn-sm:hover,.btn-sm.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-d)}
+
+/* ══ HOMEPAGE ══ */
+.hero{display:grid;grid-template-columns:1fr 460px;gap:40px;align-items:center;padding:20px 0 40px;min-height:calc(100vh - var(--th) - 48px);max-height:720px}
+.hero-l{display:flex;flex-direction:column;gap:20px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--cyan);background:var(--cyan-d);border:1px solid rgba(0,212,255,.25);padding:6px 14px;border-radius:20px;width:fit-content}
+.tag-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;box-shadow:0 0 6px var(--cyan);animation:pulse 2s infinite}
+.hero-title{font-size:46px;font-weight:800;line-height:1.12;letter-spacing:-.02em;color:var(--text)}
+.hero-acc{background:linear-gradient(135deg,var(--cyan),#60a5fa,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:14px;color:var(--text2);line-height:1.75;max-width:500px}
+.hero-btns{display:flex;gap:12px}
+.hero-stats{display:flex;align-items:center;gap:20px;padding-top:8px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat-n{font-size:22px;font-weight:800;font-family:var(--m);color:var(--cyan);line-height:1}
+.stat-l{font-size:10px;color:var(--text3);letter-spacing:.08em}
+.stat-d{width:1px;height:32px;background:var(--border2)}
+
+/* Preview Card */
+.hero-r{position:relative;display:flex;align-items:center;justify-content:center}
+.prev-card{background:rgba(30,41,59,.75);backdrop-filter:blur(24px);border:1px solid rgba(0,212,255,.25);border-radius:20px;padding:20px;width:100%;box-shadow:0 0 0 1px rgba(0,212,255,.1),0 0 60px rgba(0,212,255,.12),0 24px 64px rgba(0,0,0,.5);animation:cardFloat 5s ease-in-out infinite}
+@keyframes cardFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.prev-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.prev-badge{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--cyan)}
+.prev-dot{width:8px;height:8px;background:var(--emerald);border-radius:50%;box-shadow:0 0 8px var(--emerald);animation:pulse 1.5s infinite}
+#heroCanvas{width:100%;height:160px;border-radius:10px;background:rgba(0,0,0,.3);display:block}
+.prev-lbls{display:flex;justify-content:space-around;margin-top:14px}
+.prev-lbl{font-size:11px;color:var(--text2);font-weight:500}
+.fchip{position:absolute;background:rgba(13,21,38,.92);border:1px solid rgba(0,212,255,.3);border-radius:8px;padding:6px 12px;font-family:var(--m);font-size:11px;color:var(--cyan);white-space:nowrap;box-shadow:0 0 16px rgba(0,212,255,.15);animation:chipF 6s ease-in-out infinite}
+.fc1{top:-14px;left:-40px;animation-delay:0s}
+.fc2{bottom:30px;left:-55px;animation-delay:2s}
+.fc3{top:40px;right:-20px;animation-delay:4s}
+@keyframes chipF{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* Module Grid */
+.mods-sec{padding:16px 0 40px}
+.sec-tag{font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--cyan);margin-bottom:6px}
+.sec-title{font-size:28px;font-weight:800;color:var(--text);margin-bottom:24px}
+.mod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mod-card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border2);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.mod-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(0,212,255,.07),transparent 60%);opacity:0;transition:opacity .3s}
+.mod-card:hover{border-color:rgba(0,212,255,.4);box-shadow:0 0 28px rgba(0,212,255,.15),0 8px 24px rgba(0,0,0,.3);transform:translateY(-4px)}
+.mod-card:hover::before{opacity:1}
+.mc-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.mc-title{font-size:13px;font-weight:600;color:var(--text)}
+.mc-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.mc-frm{font-family:var(--m);font-size:11px;color:var(--text3);margin-top:auto;padding-top:8px;border-top:1px solid var(--border2)}
+.mc-num{position:absolute;top:12px;right:14px;font-family:var(--m);font-size:10px;font-weight:600;color:var(--text3)}
+
+/* ══ SIMULATION LAYOUT ══ */
+.sim-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 10px;border-bottom:1px solid var(--border2);flex-shrink:0;background:rgba(13,21,38,.6)}
+.sim-titleg{display:flex;flex-direction:column;gap:3px}
+.sim-title{font-size:20px;font-weight:700;color:var(--text)}
+.sim-sub{font-family:var(--m);font-size:12px;color:var(--text3)}
+.sim-badge{display:flex;gap:6px}
+.mode-btn{padding:4px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text3);cursor:pointer;transition:var(--tr);font-family:var(--f)}
+.mode-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.mode-btn.active{background:var(--cyan-d);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,212,255,.2)}
+
+.sim-body{display:flex;flex:1;overflow:hidden;min-height:0}
+.canvas-wrap{flex:1;position:relative;background:rgba(10,18,33,.85);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.canvas-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.022) 1px,transparent 1px);background-size:30px 30px;pointer-events:none}
+#simCanvas{display:block;cursor:crosshair}
+
+.ctrl-panel{width:252px;min-width:252px;background:rgba(13,21,38,.92);backdrop-filter:blur(16px);border-left:1px solid var(--border2);display:flex;flex-direction:column;overflow-y:auto;padding:14px;flex-shrink:0}
+.cp-head{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--text3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border2)}
+
+.chart-area{border-top:1px solid var(--border2);background:rgba(10,18,33,.7);padding:8px 16px 10px;flex-shrink:0}
+.chart-area canvas{width:100%!important}
+
+/* Shared panel components */
+.ps{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border2)}
+.ps:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.pl{font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--text3);margin-bottom:10px}
+
+.sg{margin-bottom:12px}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sn{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--text2)}
+.sv{font-family:var(--m);font-size:12px;color:var(--cyan);min-width:45px;text-align:right}
+
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--bg3);border-radius:4px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--cyan);border-radius:50%;cursor:pointer;box-shadow:0 0 8px var(--cyan-g);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
+input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(to right,var(--cyan) 0%,var(--cyan) var(--p,50%),var(--bg3) var(--p,50%));height:4px;border-radius:4px}
+
+.out-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:12px}
+.out-row:last-child{border-bottom:none}
+.ok{color:var(--text3)}.ov{font-family:var(--m);font-weight:600;color:var(--cyan)}
+.ov.warn{color:var(--amber)}.ov.good{color:var(--emerald)}.ov.bad{color:var(--rose)}
+
+.out-box{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px;margin-bottom:12px}
+.fbox{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:var(--rs);padding:12px 16px;font-family:var(--m);font-size:14px;color:var(--cyan);text-align:center;margin-bottom:8px;letter-spacing:.02em;text-shadow:0 0 12px rgba(0,212,255,.4)}
+.fnote{font-size:11px;color:var(--text3);line-height:1.5;margin-top:6px}
+.thy{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:var(--rs);padding:12px;margin-top:6px;display:none}
+.thy.show{display:block}
+.thy-t{font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--violet);margin-bottom:8px}
+.thy-b{font-size:11px;color:var(--text2);line-height:1.7}
+.hl{color:var(--cyan);font-weight:500}
+.cond{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-left:3px solid var(--amber);border-radius:var(--rs);padding:8px 12px;font-size:11px;color:var(--amber);margin:8px 0;line-height:1.5}
+.cond.info{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.2);border-left-color:var(--cyan);color:var(--cyan)}
+.cond.good{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.2);border-left-color:var(--emerald);color:var(--emerald)}
+.ar{display:flex;gap:8px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="SB">
+  <div class="sb-head">
+    <button class="hbg" id="hbgBtn" aria-label="Toggle sidebar">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="brand">
+      <div class="b-icon">⬡</div>
+      <span class="b-text">OpticsSuite</span>
+    </div>
+  </div>
+  <div class="sb-lbl">MODULES</div>
+  <div class="sb-cnt">14 interactive simulations</div>
+  <nav class="sb-nav" id="sbNav">
+    <div class="ng-lbl">FOUNDATIONS</div>
+    <div class="nav-item" data-m="refraction"><span class="n-icon">〜</span><div class="n-labels"><span class="n-lbl">Refraction</span><span class="n-sub">Ray bending · Snell's Law</span></div></div>
+    <div class="nav-item" data-m="tir"><span class="n-icon">⟵</span><div class="n-labels"><span class="n-lbl">TIR / Fiber</span><span class="n-sub">Critical angle · bouncing rays</span></div></div>
+    <div class="ng-lbl">FIBER OPTICS</div>
+    <div class="nav-item" data-m="acceptance"><span class="n-icon">◬</span><div class="n-labels"><span class="n-lbl">Acceptance Angle</span><span class="n-sub">Cone of acceptance</span></div></div>
+    <div class="nav-item" data-m="na"><span class="n-icon">◎</span><div class="n-labels"><span class="n-lbl">Numerical Aperture</span><span class="n-sub">NA = √(n₁²−n₂²)</span></div></div>
+    <div class="nav-item" data-m="attenuation"><span class="n-icon">↘</span><div class="n-labels"><span class="n-lbl">Attenuation</span><span class="n-sub">Power vs distance</span></div></div>
+    <div class="nav-item" data-m="bandwidth"><span class="n-icon">≋</span><div class="n-labels"><span class="n-lbl">Bandwidth</span><span class="n-sub">Length × dispersion</span></div></div>
+    <div class="ng-lbl">WAVE OPTICS</div>
+    <div class="nav-item" data-m="polarization"><span class="n-icon">✦</span><div class="n-labels"><span class="n-lbl">Polarization</span><span class="n-sub">Linear · circular · elliptical</span></div></div>
+    <div class="nav-item" data-m="brewster"><span class="n-icon">◈</span><div class="n-labels"><span class="n-lbl">Brewster Angle</span><span class="n-sub">Zero p-reflection</span></div></div>
+    <div class="ng-lbl">LIGHT–MATTER</div>
+    <div class="nav-item" data-m="scattering"><span class="n-icon">✸</span><div class="n-labels"><span class="n-lbl">Scattering</span><span class="n-sub">Rayleigh &amp; Mie</span></div></div>
+    <div class="nav-item" data-m="emission"><span class="n-icon">☀</span><div class="n-labels"><span class="n-lbl">Emission (LED)</span><span class="n-sub">Electron-hole pairs</span></div></div>
+    <div class="nav-item" data-m="absorption"><span class="n-icon">▼</span><div class="n-labels"><span class="n-lbl">Absorption</span><span class="n-sub">Beer-Lambert Law</span></div></div>
+    <div class="nav-item" data-m="solar"><span class="n-icon">▣</span><div class="n-labels"><span class="n-lbl">Solar Cell</span><span class="n-sub">Light-to-electricity</span></div></div>
+    <div class="nav-item" data-m="waveguide"><span class="n-icon">⊟</span><div class="n-labels"><span class="n-lbl">Waveguide</span><span class="n-sub">Mode propagation</span></div></div>
+    <div class="nav-item" data-m="carrier"><span class="n-icon">⊕</span><div class="n-labels"><span class="n-lbl">Carrier Gen.</span><span class="n-sub">e⁻–hole pairs</span></div></div>
+  </nav>
+  <div class="sb-foot">v2.0 · DESKTOP ONLY</div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="live"><div class="live-dot"></div>LIVE</div>
+    <div class="tb-center" id="tbCenter">FIBER &nbsp;·&nbsp; WAVE &nbsp;·&nbsp; RAY LAB</div>
+    <div class="tb-right">
+      <label class="th-toggle">
+        <span class="th-lbl">SHOW THEORY</span>
+        <div class="sw"><input type="checkbox" id="thyCb" checked/><span class="sw-sl"></span></div>
+      </label>
+      <div class="tb-ver">v2.0 · DESKTOP ONLY</div>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="pgHome">
+    <div class="hero">
+      <div class="hero-l">
+        <div class="hero-tag"><span class="tag-dot"></span>INTERACTIVE PHYSICS &nbsp;·&nbsp; 14 MODULES</div>
+        <h1 class="hero-title">Bend light.<br><span class="hero-acc">Trace rays.</span><br>Understand optics by doing.</h1>
+        <p class="hero-desc">Explore real-time interactive simulations of fiber optics, wave phenomena, and light–matter interactions. Adjust parameters, watch physics unfold, and build intuition you can't get from textbooks.</p>
+        <div class="hero-btns">
+          <button class="btn-p" id="btnStart">▶ Start Exploring</button>
+          <button class="btn-s" id="btnHow">? How it Works</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-n">14</span><span class="stat-l">Modules</span></div>
+          <div class="stat-d"></div>
+          <div class="stat"><span class="stat-n">∞</span><span class="stat-l">Interactions</span></div>
+          <div class="stat-d"></div>
+          <div class="stat"><span class="stat-n">0ms</span><span class="stat-l">Latency</span></div>
+        </div>
+      </div>
+      <div class="hero-r">
+        <div class="prev-card">
+          <div class="prev-head"><span class="prev-badge">LIVE WAVE PREVIEW</span><span class="prev-dot"></span></div>
+          <canvas id="heroCanvas" width="400" height="160"></canvas>
+          <div class="prev-lbls">
+            <span class="prev-lbl">〜 Refraction</span>
+            <span class="prev-lbl">✦ Polarization</span>
+            <span class="prev-lbl">≋ Interference</span>
+          </div>
+        </div>
+        <div class="fchip fc1">n₁sinθ₁ = n₂sinθ₂</div>
+        <div class="fchip fc2">NA = √(n₁²−n₂²)</div>
+        <div class="fchip fc3">θ_B = arctan(n₂/n₁)</div>
+      </div>
+    </div>
+
+    <!-- How it works (hidden) -->
+    <div id="howSec" style="display:none;padding:20px 0 10px">
+      <div class="sec-title" style="font-size:22px">How It Works</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px">
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:20px">
+          <div style="font-size:28px;font-weight:800;font-family:var(--m);color:rgba(0,212,255,.25);margin-bottom:10px">01</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px">Choose a Module</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.65">Select any of the 14 physics simulations from the sidebar navigation on the left.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:20px">
+          <div style="font-size:28px;font-weight:800;font-family:var(--m);color:rgba(0,212,255,.25);margin-bottom:10px">02</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px">Adjust Parameters</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.65">Use sliders in the right panel to change physical quantities. Updates happen in real-time.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:20px">
+          <div style="font-size:28px;font-weight:800;font-family:var(--m);color:rgba(0,212,255,.25);margin-bottom:10px">03</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px">Watch Physics</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.65">The canvas updates instantly. Graphs recalculate live. Formulas always visible.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:20px">
+          <div style="font-size:28px;font-weight:800;font-family:var(--m);color:rgba(0,212,255,.25);margin-bottom:10px">04</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px">Read Theory</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.65">Toggle "Show Theory" to see full explanations and physics conditions for each module.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mods-sec">
+      <div class="sec-tag">SIMULATORS</div>
+      <div class="sec-title">Choose a module</div>
+      <div class="mod-grid" id="modGrid"></div>
+    </div>
+  </div>
+
+  <!-- SIMULATION PAGE -->
+  <div class="page-sim" id="pgSim">
+    <div class="sim-hdr">
+      <div class="sim-titleg">
+        <div class="sim-title" id="sTitle">—</div>
+        <div class="sim-sub" id="sSub">—</div>
+      </div>
+      <div class="sim-badge" id="sBadge"></div>
+    </div>
+    <div class="sim-body">
+      <div class="canvas-wrap" id="cWrap"><canvas id="simCanvas"></canvas></div>
+      <div class="ctrl-panel" id="ctrlPanel"></div>
+    </div>
+    <div class="chart-area" id="chartArea" style="display:none">
+      <canvas id="chartCanvas" height="150"></canvas>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+/* ══════════════════════════════════════════════
+   GLOBAL STATE & HELPERS
+══════════════════════════════════════════════ */
+const MODS=[
+  {id:'refraction',  t:'Refraction Simulator',   s:'n₁·sin θ₁ = n₂·sin θ₂',  ico:'〜', c:'#00d4ff', d:'Real-time ray bending across media interfaces',       f:'n₁sinθ₁ = n₂sinθ₂'},
+  {id:'tir',         t:'TIR & Optical Fiber',     s:'θc = sin⁻¹(n₂/n₁)',       ico:'⟵', c:'#38bdf8', d:'Total internal reflection and fiber light guiding',    f:'θc = sin⁻¹(n₂/n₁)'},
+  {id:'acceptance',  t:'Acceptance Angle',        s:'sinθₐ = √(n₁²−n₂²)/n₀',  ico:'◬', c:'#0ea5e9', d:'Angular range for light entering an optical fiber',    f:'sinθₐ = √(n₁²−n₂²)/n₀'},
+  {id:'na',          t:'Numerical Aperture',      s:'NA = √(n₁²−n₂²)',         ico:'◎', c:'#06b6d4', d:'Quantifies the fiber light-gathering ability',         f:'NA = √(n₁²−n₂²)'},
+  {id:'attenuation', t:'Fiber Attenuation',       s:'P(L) = P₀·e^(−αL)',       ico:'↘', c:'#22d3ee', d:'Signal power loss along optical fiber length',         f:'P = P₀·e^(−αL)'},
+  {id:'bandwidth',   t:'Bandwidth Estimator',     s:'BW = 0.44/Δτ, Δτ=D·L·Δλ',ico:'≋', c:'#67e8f9', d:'Chromatic dispersion limits on fiber data rate',       f:'BW = 0.44/Δτ'},
+  {id:'polarization',t:'Polarization Simulator',  s:'E = E₀·cos(ωt−kz)',       ico:'✦', c:'#a78bfa', d:'Linear, circular and elliptical polarization states',  f:'E = E₀·cos(ωt−kz)'},
+  {id:'brewster',    t:'Brewster Angle',          s:'θB = arctan(n₂/n₁)',      ico:'◈', c:'#818cf8', d:'Polarization at Brewster angle condition',             f:'θB = arctan(n₂/n₁)'},
+  {id:'scattering',  t:'Scattering of Light',     s:'I ∝ 1/λ⁴ (Rayleigh)',    ico:'✸', c:'#f472b6', d:'Wavelength-dependent scattering in particles',         f:'I ∝ 1/λ⁴'},
+  {id:'emission',    t:'LED / OLED Emission',     s:'E = hc/λ = hν',           ico:'☀', c:'#fbbf24', d:'Electron-hole recombination and photon emission',      f:'E = hc/λ'},
+  {id:'absorption',  t:'Light Absorption',        s:'I(x) = I₀·e^(−αx)',      ico:'▼', c:'#34d399', d:'Intensity decay of light through absorbing medium',    f:'I = I₀·e^(−αx)'},
+  {id:'solar',       t:'Solar Cell Principle',    s:'I = Iph − I₀(e^(qV/kT)−1)',ico:'▣',c:'#f59e0b', d:'Photovoltaic conversion and I-V characteristics',    f:'I = Iph−I₀(e^qV/kT−1)'},
+  {id:'waveguide',   t:'Optical Waveguide',       s:'V = (2πa/λ)·NA',          ico:'⊟', c:'#2dd4bf', d:'Light confinement modes in planar waveguides',         f:'V = (2πa/λ)·NA'},
+  {id:'carrier',     t:'Carrier Generation',      s:'G = α·I/hν',              ico:'⊕', c:'#fb7185', d:'Photon-induced carrier generation & recombination',    f:'G = αI/hν'},
+];
+
+let curMod=null, animId=null, chartInst=null, theoryOn=true;
+
+const $=id=>document.getElementById(id);
+const SB=$('SB'), sTitle=$('sTitle'), sSub=$('sSub'), sBadge=$('sBadge');
+const ctrlPanel=$('ctrlPanel'), chartArea=$('chartArea');
+
+/* Theory toggle */
+$('thyCb').addEventListener('change',e=>{
+  theoryOn=e.target.checked;
+  document.querySelectorAll('.thy').forEach(el=>el.classList.toggle('show',theoryOn));
+});
+
+/* Sidebar toggle */
+$('hbgBtn').addEventListener('click',()=>SB.classList.toggle('col'));
+
+/* Nav */
+$('sbNav').addEventListener('click',e=>{
+  const item=e.target.closest('.nav-item');
+  if(item) loadMod(item.dataset.m);
+});
+
+/* Hero buttons */
+$('btnStart').addEventListener('click',()=>loadMod('refraction'));
+$('btnHow').addEventListener('click',()=>{
+  const h=$('howSec');
+  h.style.display=h.style.display==='none'?'block':'none';
+});
+
+/* ── Module Grid ── */
+function buildGrid(){
+  const g=$('modGrid'); g.innerHTML='';
+  MODS.forEach((m,i)=>{
+    const c=document.createElement('div');
+    c.className='mod-card'; c.dataset.m=m.id;
+    c.innerHTML=`<span class="mc-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="mc-ico" style="background:${m.c}18;color:${m.c}">${m.ico}</div>
+      <div class="mc-title">${m.t}</div>
+      <div class="mc-desc">${m.d}</div>
+      <div class="mc-frm">${m.f}</div>`;
+    c.addEventListener('click',()=>loadMod(m.id));
+    g.appendChild(c);
+  });
+}
+
+/* ── Load Module ── */
+function loadMod(id){
+  if(animId){cancelAnimationFrame(animId);animId=null;}
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  const def=MODS.find(m=>m.id===id); if(!def) return;
+  curMod=id;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.m===id));
+  $('pgHome').classList.remove('active');
+  const ps=$('pgSim'); ps.classList.add('active');
+  sTitle.textContent=def.t; sSub.textContent=def.s;
+  sBadge.innerHTML=''; ctrlPanel.innerHTML='';
+  chartArea.style.display='none';
+  requestAnimationFrame(()=>{resizeCv(); INIT[id] && INIT[id]();});
+}
+
+function resizeCv(){
+  const wrap=$('cWrap'), cv=$('simCanvas');
+  if(!wrap||!cv) return;
+  cv.width=wrap.clientWidth; cv.height=wrap.clientHeight;
+}
+window.addEventListener('resize',()=>{resizeCv();if(curMod&&INIT[curMod])INIT[curMod]();});
+
+/* ── Slider helper ── */
+function mkSlider(id,label,min,max,step,val,unit,dec,onChange){
+  const w=document.createElement('div'); w.className='sg';
+  const vid='v'+id;
+  w.innerHTML=`<div class="sh"><span class="sn">${label}</span><span class="sv" id="${vid}">${(+val).toFixed(dec??2)}${unit??''}</span></div>
+  <input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"/>`;
+  const sl=w.querySelector('input'), ve=w.querySelector('#'+vid);
+  function upd(){
+    const v=parseFloat(sl.value);
+    ve.textContent=v.toFixed(dec??2)+(unit??'');
+    const p=((v-min)/(max-min))*100;
+    sl.style.setProperty('--p',p+'%');
+    if(onChange) onChange(v);
+  }
+  sl.addEventListener('input',upd); upd();
+  return w;
+}
+
+/* Section helper */
+function mkSec(label){
+  const s=document.createElement('div'); s.className='ps';
+  if(label){const l=document.createElement('div');l.className='pl';l.textContent=label;s.appendChild(l);}
+  return s;
+}
+/* Output box */
+function mkOuts(rows){
+  const b=document.createElement('div'); b.className='out-box ps';
+  const lbl=document.createElement('div'); lbl.className='pl'; lbl.textContent='OUTPUTS'; b.appendChild(lbl);
+  rows.forEach(([k,id])=>{
+    const r=document.createElement('div'); r.className='out-row';
+    r.innerHTML=`<span class="ok">${k}</span><span class="ov" id="${id}">—</span>`;
+    b.appendChild(r);
+  });
+  return b;
+}
+function mkFbox(f,note=''){
+  const d=document.createElement('div'); d.className='ps';
+  d.innerHTML=`<div class="fbox">${f}</div>${note?`<div class="fnote">${note}</div>`:''}`;
+  return d;
+}
+function mkThy(title,html){
+  const d=document.createElement('div'); d.className='thy'+(theoryOn?' show':'');
+  d.innerHTML=`<div class="thy-t">THEORY · ${title}</div><div class="thy-b">${html}</div>`;
+  return d;
+}
+function set(id,txt,cls=''){const e=$(id);if(e){e.textContent=txt;e.className='ov'+(cls?' '+cls:'');}}
+
+/* Chart defaults */
+const CDEFS={
+  responsive:false, maintainAspectRatio:false,
+  plugins:{
+    legend:{labels:{color:'#94a3b8',font:{family:'JetBrains Mono',size:11}}},
+    tooltip:{backgroundColor:'rgba(13,21,38,.95)',borderColor:'rgba(0,212,255,.3)',borderWidth:1,titleColor:'#00d4ff',bodyColor:'#e2e8f0'}
+  },
+  scales:{
+    x:{grid:{color:'rgba(0,212,255,.06)'},ticks:{color:'#64748b',font:{family:'JetBrains Mono',size:10}}},
+    y:{grid:{color:'rgba(0,212,255,.06)'},ticks:{color:'#64748b',font:{family:'JetBrains Mono',size:10}}}
+  }
+};
+
+/* Draw helpers */
+function drawGlowLine(ctx,x1,y1,x2,y2,color,width,blur){
+  ctx.save();
+  ctx.strokeStyle=color; ctx.lineWidth=width;
+  ctx.shadowColor=color; ctx.shadowBlur=blur??18;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.restore();
+}
+function drawArrow(ctx,x1,y1,x2,y2,color,hs=8){
+  drawGlowLine(ctx,x1,y1,x2,y2,color,2,14);
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.save(); ctx.fillStyle=color; ctx.shadowColor=color; ctx.shadowBlur=10;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hs*Math.cos(a-Math.PI/6),y2-hs*Math.sin(a-Math.PI/6));
+  ctx.lineTo(x2-hs*Math.cos(a+Math.PI/6),y2-hs*Math.sin(a+Math.PI/6));
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function label(ctx,txt,x,y,color='#00d4ff',fs=12,align='center'){
+  ctx.save(); ctx.fillStyle=color; ctx.font=`${fs}px JetBrains Mono`;
+  ctx.textAlign=align; ctx.fillText(txt,x,y); ctx.restore();
+}
+
+/* ══════════════════════════════════════════════
+   HERO WAVE ANIMATION
+══════════════════════════════════════════════ */
+(function heroWave(){
+  const cv=$('heroCanvas'); if(!cv) return;
+  const ctx=cv.getContext('2d'); let t=0;
+  (function draw(){
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(10,18,33,.3)'; ctx.fillRect(0,0,W,H);
+    [{c:'#00d4ff',a:28,f:.025,sp:.04,ph:0,al:.9},{c:'#7c3aed',a:18,f:.035,sp:.06,ph:2,al:.55},{c:'#10b981',a:12,f:.045,sp:.03,ph:Math.PI,al:.4}].forEach(w=>{
+      ctx.beginPath(); ctx.shadowBlur=12; ctx.shadowColor=w.c; ctx.strokeStyle=w.c; ctx.globalAlpha=w.al; ctx.lineWidth=2;
+      for(let x=0;x<=W;x+=2){const y=H/2+w.a*Math.sin(w.f*x+t*w.sp+w.ph)+w.a*.35*Math.sin(w.f*2*x-t*w.sp*1.3+w.ph);x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+      ctx.stroke();
+    });
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
+    const px=((t*55)%(W+40))-20, py=H/2+28*Math.sin(.025*px+t*.04);
+    ctx.beginPath(); ctx.arc(px,py,4,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.shadowColor='#00d4ff'; ctx.shadowBlur=16; ctx.fill(); ctx.shadowBlur=0;
+    t++; requestAnimationFrame(draw);
+  })();
+})();
+
+/* ══════════════════════════════════════════════
+   MODULE IMPLEMENTATIONS
+══════════════════════════════════════════════ */
+const INIT={};
+
+/* ─────────────────────────────────────────────
+   1. REFRACTION — Snell's Law
+───────────────────────────────────────────── */
+INIT.refraction=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let theta1=30,n1=1.0,n2=1.5;
+  const p=ctrlPanel; p.innerHTML='';
+  const head=document.createElement('div'); head.className='cp-head'; head.textContent='Parameters'; p.appendChild(head);
+
+  const outs=mkOuts([['Refracted angle θ₂','r-th2'],['Critical angle θc','r-thc'],['Status','r-stat']]);
+  p.appendChild(outs);
+
+  p.appendChild(mkSlider('r-t1','INCIDENT ANGLE θ₁',1,89,1,30,'°',1,v=>{theta1=v;draw();}));
+  p.appendChild(mkSlider('r-n1','INDEX n₁ (Medium 1)',.9,2.5,.01,1.0,'',2,v=>{n1=v;draw();}));
+  p.appendChild(mkSlider('r-n2','INDEX n₂ (Medium 2)',.9,2.5,.01,1.5,'',2,v=>{n2=v;draw();}));
+  p.appendChild(mkFbox('n₁·sin θ₁ = n₂·sin θ₂','When going from denser to rarer medium, if θ₁ > θc light is totally reflected.'));
+  p.appendChild(mkThy('REFRACTION','Light bends when passing between media of differing refractive index. The ratio of the sines of angles equals the inverse ratio of indices.<br><br>When traveling from a denser medium (higher n) to a rarer one and the angle exceeds the <span class="hl">critical angle θc</span>, no refracted ray exists — total internal reflection occurs.'));
+
+  function draw(){
+    const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+
+    // Media
+    const g1=ctx.createLinearGradient(0,0,0,cy);
+    g1.addColorStop(0,'rgba(0,212,255,.07)'); g1.addColorStop(1,'rgba(0,212,255,.02)');
+    ctx.fillStyle=g1; ctx.fillRect(0,0,W,cy);
+    const g2=ctx.createLinearGradient(0,cy,0,H);
+    g2.addColorStop(0,'rgba(124,58,237,.05)'); g2.addColorStop(1,'rgba(124,58,237,.12)');
+    ctx.fillStyle=g2; ctx.fillRect(0,cy,W,H);
+
+    // Interface
+    ctx.save(); ctx.setLineDash([8,4]); ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke(); ctx.restore();
+
+    // Normal
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cx,cy-160); ctx.lineTo(cx,cy+160); ctx.stroke(); ctx.restore();
+
+    // Media labels
+    label(ctx,`Medium 1 · n₁ = ${n1.toFixed(2)}`,40,30,'rgba(0,212,255,.7)',12,'left');
+    label(ctx,`Medium 2 · n₂ = ${n2.toFixed(2)}`,40,cy+24,'rgba(167,139,250,.7)',12,'left');
+
+    const t1r=theta1*Math.PI/180;
+    const sinT2=n1*Math.sin(t1r)/n2;
+    const len=170;
+
+    // Incident ray
+    const ix=cx-len*Math.sin(t1r), iy=cy-len*Math.cos(t1r);
+    drawArrow(ctx,ix,iy,cx,cy,'#00d4ff');
+    label(ctx,`θ₁ = ${theta1.toFixed(0)}°`,cx-len*.45*Math.sin(t1r)-14,cy-len*.45*Math.cos(t1r)-8,'#00d4ff',11);
+
+    // Critical angle
+    const thc=n1<n2?null:Math.asin(n2/n1);
+    const thcDeg=thc?thc*180/Math.PI:null;
+    set('r-thc', thcDeg?thcDeg.toFixed(2)+'°':'n/a');
+
+    if(sinT2<=1){
+      const t2r=Math.asin(sinT2);
+      const rx=cx+len*Math.sin(t2r), ry=cy+len*Math.cos(t2r);
+      drawArrow(ctx,cx,cy,rx,ry,'#7c3aed');
+      label(ctx,`θ₂ = ${(t2r*180/Math.PI).toFixed(2)}°`,cx+len*.4*Math.sin(t2r)+14,cy+len*.4*Math.cos(t2r)+14,'#a78bfa',11);
+      set('r-th2',(t2r*180/Math.PI).toFixed(2)+'°');
+      set('r-stat','Refracting','good');
+    } else {
+      // TIR — reflected ray
+      const rx=cx+len*Math.sin(t1r), ry=cy-len*Math.cos(t1r);
+      drawArrow(ctx,cx,cy,rx,ry,'#f43f5e');
+      label(ctx,'TIR!',cx+30,cy-60,'#f43f5e',13);
+      set('r-th2','TIR','bad'); set('r-stat','Total Internal Reflection','bad');
+    }
+  }
+  draw();
+};
+
+/* ─────────────────────────────────────────────
+   2. TIR & OPTICAL FIBER
+───────────────────────────────────────────── */
+INIT.tir=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let angle=60,n1=1.5,n2=1.0,mode='flat';
+  sBadge.innerHTML='<button class="mode-btn active" data-md="flat">FLAT</button><button class="mode-btn" data-md="fiber">FIBER</button><button class="mode-btn" data-md="guided">GUIDED (TIR)</button>';
+  sBadge.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{
+    mode=b.dataset.md;
+    sBadge.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('active',x===b));
+    draw();
+  }));
+
+  const p=ctrlPanel; p.innerHTML='';
+  p.appendChild(mkOuts([['Critical angle θc','t-thc'],['Condition','t-cond']]));
+  p.appendChild(mkSlider('t-ang','ANGLE θ',1,89,1,60,'°',1,v=>{angle=v;draw();}));
+  p.appendChild(mkSlider('t-n1','CORE n₁',1.1,2.5,.01,1.5,'',2,v=>{n1=v;draw();}));
+  p.appendChild(mkSlider('t-n2','CLADDING n₂',.9,1.49,.01,1.0,'',2,v=>{n2=Math.min(v,n1-.01);draw();}));
+  p.appendChild(mkFbox('θc = sin⁻¹(n₂/n₁), &nbsp; n₁ > n₂','Only rays striking the boundary at angles greater than θc are guided through the fiber.'));
+  p.appendChild(mkThy('TIR & FIBER','When light attempts to leave a denser medium for a rarer one at an angle exceeding the critical angle, no refracted ray exists — all energy is reflected.<br><br>Optical fibers exploit this: the core has a slightly higher index than the cladding, so rays launched within the acceptance cone bounce indefinitely without loss into the cladding.'));
+
+  function draw(){
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    const thc=Math.asin(n2/n1);
+    const thcD=thc*180/Math.PI;
+    set('t-thc',thcD.toFixed(2)+'°');
+    const isTIR=angle>=thcD;
+    set('t-cond',isTIR?'θ > θc → TIR':'θ < θc → Refraction',isTIR?'bad':'good');
+
+    if(mode==='flat'){
+      const cy=H/2;
+      // Media
+      const g1=ctx.createLinearGradient(0,0,0,cy);
+      g1.addColorStop(0,'rgba(0,212,255,.07)');g1.addColorStop(1,'rgba(0,212,255,.02)');
+      ctx.fillStyle=g1;ctx.fillRect(0,0,W,cy);
+      ctx.fillStyle='rgba(124,58,237,.08)';ctx.fillRect(0,cy,W,H);
+      label(ctx,`Denser (core) · n₁ = ${n1.toFixed(2)}`,16,cy-20,'rgba(0,212,255,.6)',11,'left');
+      label(ctx,`Rarer · n₂ = ${n2.toFixed(2)}`,16,cy+20,'rgba(167,139,250,.6)',11,'left');
+
+      ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(W/2,cy-180);ctx.lineTo(W/2,cy+140);ctx.stroke();
+      ctx.restore();
+
+      const ar=angle*Math.PI/180,cx=W/2,len=170;
+      const ix=cx-len*Math.sin(ar),iy=cy-len*Math.cos(ar);
+      drawArrow(ctx,ix,iy,cx,cy,'#00d4ff');
+      label(ctx,`θ = ${angle.toFixed(0)}°`,cx-len*.4*Math.sin(ar)-20,cy-len*.4*Math.cos(ar),'#00d4ff',11);
+
+      if(isTIR){
+        const rx=cx+len*Math.sin(ar),ry=cy-len*Math.cos(ar);
+        drawArrow(ctx,cx,cy,rx,ry,'#f43f5e');
+        label(ctx,'✦ TIR',cx+40,cy-40,'#f43f5e',13);
+        // Draw TIR arc indicator
+        ctx.save();ctx.strokeStyle='rgba(244,63,94,.4)';ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.arc(cx,cy,50,-Math.PI/2+ar,-Math.PI/2,true);ctx.stroke();ctx.restore();
+      } else {
+        const sinT2=n1*Math.sin(ar)/n2;
+        const t2r=Math.asin(sinT2);
+        drawArrow(ctx,cx,cy,cx+len*Math.sin(t2r),cy+len*Math.cos(t2r),'#7c3aed');
+      }
+
+    } else {
+      // Fiber cross-section
+      const fh=H*.28,cy=H/2,x0=60,x1=W-60;
+      // Cladding
+      ctx.fillStyle='rgba(30,41,59,.9)';ctx.fillRect(x0,cy-fh*1.6,x1-x0,fh*3.2);
+      // Core
+      const cg=ctx.createLinearGradient(x0,cy-fh,x0,cy+fh);
+      cg.addColorStop(0,'rgba(0,212,255,.12)');cg.addColorStop(.5,'rgba(0,212,255,.18)');cg.addColorStop(1,'rgba(0,212,255,.12)');
+      ctx.fillStyle=cg;ctx.fillRect(x0,cy-fh,x1-x0,fh*2);
+      // Borders
+      drawGlowLine(ctx,x0,cy-fh,x1,cy-fh,'rgba(0,212,255,.5)',1.5,4);
+      drawGlowLine(ctx,x0,cy+fh,x1,cy+fh,'rgba(0,212,255,.5)',1.5,4);
+      label(ctx,`Core n₁ = ${n1.toFixed(2)}`,(x0+x1)/2,cy+6,'rgba(0,212,255,.7)',11);
+      label(ctx,`Cladding n₂ = ${n2.toFixed(2)}`,(x0+x1)/2,cy-fh-10,'rgba(167,139,250,.6)',11);
+
+      if(mode==='guided'){
+        // Animate bouncing ray
+        const segments=8,lx=(x1-x0)/segments;
+        let px=x0,py=cy,dir=1;
+        ctx.save();ctx.strokeStyle='#00d4ff';ctx.lineWidth=2;ctx.shadowColor='#00d4ff';ctx.shadowBlur=14;
+        ctx.beginPath();ctx.moveTo(px,py);
+        for(let i=0;i<segments;i++){
+          const nx=px+lx,ny=py+dir*fh*.85;
+          const cny=Math.max(cy-fh+8,Math.min(cy+fh-8,ny));
+          ctx.lineTo(nx,cny);
+          if(ny<=cy-fh+8||ny>=cy+fh-8) dir*=-1;
+          px=nx;py=cny;
+        }
+        ctx.stroke();ctx.restore();
+
+        // Photon dot (animated)
+        if(!INIT.tir._t) INIT.tir._t=0;
+        INIT.tir._t=(INIT.tir._t+1)%120;
+        const pct=INIT.tir._t/120;
+        const ptx=x0+pct*(x1-x0);
+        const seg=Math.floor(pct*segments);
+        const segFrac=(pct*segments)-seg;
+        const startY=seg%2===0?cy:cy;
+        const endY=seg%2===0?cy+fh*.85:cy-fh*.85;
+        const pty=startY+(endY-startY)*segFrac;
+        ctx.save();ctx.beginPath();ctx.arc(ptx,pty,5,0,Math.PI*2);
+        ctx.fillStyle='#fff';ctx.shadowColor='#00d4ff';ctx.shadowBlur=20;ctx.fill();ctx.restore();
+        animId=requestAnimationFrame(()=>{if(curMod==='tir')draw();});
+      } else {
+        // Static fiber — show a straight guide
+        const my=cy;
+        drawArrow(ctx,x0+20,my,x1-20,my,'#00d4ff');
+      }
+    }
+  }
+  draw();
+};
+
+/* ─────────────────────────────────────────────
+   3. ACCEPTANCE ANGLE
+───────────────────────────────────────────── */
+INIT.acceptance=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let n1=1.5,n2=1.46,n0=1.0;
+  sBadge.innerHTML=`<div style="font-family:var(--m);font-size:12px;color:var(--cyan)" id="ac-badge">θₐ = —</div>`;
+
+  const p=ctrlPanel; p.innerHTML='';
+  p.innerHTML='<div class="cp-head">Fiber Parameters</div>';
+  p.appendChild(mkOuts([['Critical angle θc','ac-thc'],['Acceptance angle θₐ','ac-tha'],['Full acceptance cone','ac-cone']]));
+  p.appendChild(mkSlider('ac-n1','CORE INDEX n₁',1.1,2.5,.01,1.5,'',2,v=>{n1=v;draw();}));
+  p.appendChild(mkSlider('ac-n2','CLADDING INDEX n₂',.9,2.4,.01,1.46,'',2,v=>{n2=Math.min(v,n1-.01);draw();}));
+  p.appendChild(mkSlider('ac-n0','AMBIENT INDEX n₀',.9,1.5,.01,1.0,'',2,v=>{n0=v;draw();}));
+  p.appendChild(mkFbox('sin θₐ = √(n₁² − n₂²) / n₀','Any external ray within this half-angle enters the core and propagates via TIR.'));
+  p.appendChild(mkThy('ACCEPTANCE CONE','The acceptance cone is the set of launch directions at the fiber face that will undergo total internal reflection once refracted into the core.<br><br>Its half-angle θₐ depends on the indices of core, cladding, and ambient medium — it is directly linked to the numerical aperture.'));
+
+  function draw(){
+    const W=cv.width,H=cv.height,cx=W*.38,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+
+    const sinTha=Math.sqrt(Math.max(0,n1*n1-n2*n2))/n0;
+    const tha=Math.asin(Math.min(1,sinTha));
+    const thaDeg=tha*180/Math.PI;
+    const thc=Math.asin(n2/n1)*180/Math.PI;
+
+    set('ac-thc',thc.toFixed(2)+'°');
+    set('ac-tha',thaDeg.toFixed(2)+'°');
+    set('ac-cone',(2*thaDeg).toFixed(2)+'°');
+    const badge=$('ac-badge'); if(badge) badge.textContent=`θₐ = ${thaDeg.toFixed(2)}°`;
+
+    // Fiber
+    const fh=H*.22, x0=cx+10, x1=W-60;
+    ctx.fillStyle='rgba(30,41,59,.8)';ctx.fillRect(x0,cy-fh*1.5,x1-x0,fh*3);
+    const cg=ctx.createLinearGradient(x0,cy-fh,x0,cy+fh);
+    cg.addColorStop(0,'rgba(0,212,255,.1)');cg.addColorStop(.5,'rgba(0,212,255,.17)');cg.addColorStop(1,'rgba(0,212,255,.1)');
+    ctx.fillStyle=cg;ctx.fillRect(x0,cy-fh,x1-x0,fh*2);
+    drawGlowLine(ctx,x0,cy-fh,x1,cy-fh,'rgba(0,212,255,.5)',1.5,4);
+    drawGlowLine(ctx,x0,cy+fh,x1,cy+fh,'rgba(0,212,255,.5)',1.5,4);
+    label(ctx,`Cladding n₂ = ${n2.toFixed(2)}`,(x0+x1)/2,cy-fh-10,'rgba(167,139,250,.55)',11);
+    label(ctx,`Core n₁ = ${n1.toFixed(2)}`,(x0+x1)/2,cy+6,'rgba(0,212,255,.65)',11);
+    label(ctx,`Ambient n₀ = ${n0.toFixed(2)}`,cx-80,cy,'rgba(148,163,184,.5)',11);
+
+    // Acceptance cone fill
+    const coneLen=cx-40;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x0,cy);
+    ctx.lineTo(x0-coneLen,cy-coneLen*Math.tan(tha));
+    ctx.lineTo(x0-coneLen,cy+coneLen*Math.tan(tha));
+    ctx.closePath();
+    ctx.fillStyle='rgba(0,212,255,.07)';ctx.fill();
+    ctx.strokeStyle='rgba(0,212,255,.35)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.restore();
+
+    // Accepted rays
+    [-1,-.5,0,.5,1].forEach(t=>{
+      const ang=t*tha*.9;
+      const ex=x0-coneLen,ey=cy+coneLen*Math.sin(ang);
+      ctx.save();ctx.strokeStyle='rgba(0,212,255,.6)';ctx.lineWidth=1.5;ctx.shadowColor='#00d4ff';ctx.shadowBlur=8;
+      ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(x0,cy);ctx.stroke();ctx.restore();
+    });
+
+    // Rejected rays
+    [[tha+.25,'rgba(245,158,11,.7)'],[-(tha+.25),'rgba(245,158,11,.7)']].forEach(([ang,c])=>{
+      const ex=x0-coneLen+20,ey=cy+coneLen*Math.sin(ang)*1.1;
+      ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle=c;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(x0+40,cy+(x0+40-ex)*Math.tan(ang));ctx.stroke();ctx.restore();
+    });
+
+    label(ctx,'rejected (θ > θₐ)',x0-coneLen*.6,cy-coneLen*Math.tan(tha)-14,'rgba(245,158,11,.7)',10);
+    label(ctx,`θₐ`,x0-coneLen*.22,cy+16,'#00d4ff',12);
+  }
+  draw();
+};
+
+/* ─────────────────────────────────────────────
+   4. NUMERICAL APERTURE
+───────────────────────────────────────────── */
+INIT.na=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let n1=1.5,n2=1.46; let t=0;
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Indices</div>';
+  p.appendChild(mkOuts([['Numerical Aperture','na-na'],['Acceptance angle θₐ','na-tha'],['Full cone 2θₐ','na-cone']]));
+  p.appendChild(mkSlider('na-n1','CORE n₁',1.1,2.5,.01,1.5,'',2,v=>{n1=v;drawNA();}));
+  p.appendChild(mkSlider('na-n2','CLADDING n₂',.9,2.4,.01,1.46,'',2,v=>{n2=Math.min(v,n1-.01);drawNA();}));
+  p.appendChild(mkFbox('NA = n₀ sin θₐ = √(n₁² − n₂²)','NA quantifies the light-gathering ability of the fiber.'));
+  p.appendChild(mkThy('NUMERICAL APERTURE','NA is a pure number that combines the indices of core and cladding. Higher NA means a wider acceptance cone and more gathered light — but also higher modal dispersion.<br><br>Typical single-mode fibers: NA ≈ 0.12–0.14. Multi-mode step-index: NA ≈ 0.20–0.29.'));
+  const ar=document.createElement('div'); ar.className='ar';
+  const rb=document.createElement('button'); rb.className='btn-sm'; rb.textContent='Reset';
+  const pb=document.createElement('button'); pb.className='btn-sm'; pb.textContent='Preset SMF';
+  rb.addEventListener('click',()=>{ n1=1.5;n2=1.46; $('na-n1').value=1.5;$('na-n2').value=1.46; [['na-n1',1.5],['na-n2',1.46]].forEach(([id,v])=>{ const sl=$(id);sl.value=v;const ev=document.getElementById('v'+id);if(ev)ev.textContent=v.toFixed(2); const p=((v-parseFloat(sl.min))/(parseFloat(sl.max)-parseFloat(sl.min)))*100;sl.style.setProperty('--p',p+'%');}); drawNA();});
+  pb.addEventListener('click',()=>{ n1=1.468;n2=1.463; [['na-n1',1.468],['na-n2',1.463]].forEach(([id,v])=>{const sl=$(id);sl.value=v;const ev=document.getElementById('v'+id);if(ev)ev.textContent=v.toFixed(2);const p=((v-parseFloat(sl.min))/(parseFloat(sl.max)-parseFloat(sl.min)))*100;sl.style.setProperty('--p',p+'%');}); drawNA();});
+  ar.appendChild(rb);ar.appendChild(pb); p.appendChild(ar);
+
+  function drawNA(){
+    if(animId){cancelAnimationFrame(animId);animId=null;}
+    const W=cv.width,H=cv.height,cx=W*.55,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+    const na=Math.sqrt(Math.max(0,n1*n1-n2*n2));
+    const tha=Math.asin(Math.min(.999,na));
+    const thaDeg=tha*180/Math.PI;
+    set('na-na',na.toFixed(4));
+    set('na-tha',thaDeg.toFixed(2)+'°');
+    set('na-cone',(2*thaDeg).toFixed(2)+'°');
+
+    // Circle for NA
+    const R=Math.min(W*.22,H*.36);
+    // Draw acceptance circle
+    ctx.save();
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,212,255,.4)';ctx.lineWidth=2;
+    ctx.shadowColor='#00d4ff';ctx.shadowBlur=16;ctx.stroke();
+    // Dashed circles
+    [.6,.8,1.2,1.5].forEach(r=>{
+      ctx.beginPath();ctx.arc(cx,cy,R*r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(0,212,255,.08)';ctx.shadowBlur=0;ctx.lineWidth=1;
+      ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+    });
+    ctx.restore();
+
+    // NA label inside
+    ctx.save();ctx.fillStyle='rgba(0,212,255,.9)';ctx.font='bold 15px JetBrains Mono';ctx.textAlign='center';
+    ctx.shadowColor='#00d4ff';ctx.shadowBlur=12;
+    ctx.fillText(`NA = ${na.toFixed(3)}`,cx,cy+5);
+    ctx.restore();
+
+    // Acceptance cone from left
+    const coneX=cx-R, coneLen=W*.3;
+    ctx.save();
+    ctx.beginPath();ctx.moveTo(coneX,cy);
+    ctx.lineTo(coneX-coneLen,cy-coneLen*Math.tan(tha));
+    ctx.lineTo(coneX-coneLen,cy+coneLen*Math.tan(tha));
+    ctx.closePath();
+    ctx.fillStyle='rgba(0,212,255,.06)';ctx.fill();
+    ctx.strokeStyle='rgba(0,212,255,.3)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.restore();
+
+    // Rays into cone
+    [-1,-.5,0,.5,1].forEach(k=>{
+      const ang=k*tha*.85;
+      const sx=coneX-coneLen, sy=cy+coneLen*Math.sin(ang);
+      ctx.save();ctx.strokeStyle=`rgba(0,212,255,${.3+Math.abs(k)*.1})`;ctx.lineWidth=1.5;ctx.shadowColor='#00d4ff';ctx.shadowBlur=8;
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(coneX,cy);ctx.stroke();ctx.restore();
+    });
+
+    // NA annotation line on circle
+    ctx.save();ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.sin(tha),cy-R*Math.cos(tha));ctx.stroke();
+    label(ctx,'NA = sin θₐ · n₀',cx+R*.5*Math.sin(tha)+55,cy-R*.5*Math.cos(tha),'rgba(255,255,255,.5)',10);
+    label(ctx,`NA = ${na.toFixed(3)}`,cx+R+14,cy,'rgba(255,255,255,.35)',11,'left');
+    ctx.restore();
+    label(ctx,'Acceptance cone θₐ = '+thaDeg.toFixed(2)+'°',cx-coneLen*.3,cy-coneLen*Math.tan(tha)-18,'rgba(0,212,255,.5)',10);
+  }
+  drawNA();
+};
+
+/* ─────────────────────────────────────────────
+   5. FIBER ATTENUATION
+───────────────────────────────────────────── */
+INIT.attenuation=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let alpha=0.2,P0=1.0,L=100;
+  chartArea.style.display='block'; chartArea.style.height='190px';
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Parameters</div>';
+  p.appendChild(mkOuts([['Output power P(L)','at-p'],['Loss (dB)','at-db'],['Power at 50 km','at-p50']]));
+  p.appendChild(mkSlider('at-a','ATTENUATION α (dB/km)',0.01,5,.01,0.2,' dB/km',2,v=>{alpha=v;update();}));
+  p.appendChild(mkSlider('at-p0','INPUT POWER P₀',0.1,10,.1,1.0,' mW',1,v=>{P0=v;update();}));
+  p.appendChild(mkSlider('at-l','FIBER LENGTH L',1,500,1,100,' km',0,v=>{L=v;update();}));
+  p.appendChild(mkFbox('P(L) = P₀ · 10^(−αL/10)','α in dB/km. Every 10/α km, power drops to half.'));
+  p.appendChild(mkThy('ATTENUATION','Optical fiber attenuation results from absorption, scattering (mainly Rayleigh), and waveguide imperfections.<br><br><span class="hl">Modern single-mode fibers</span> achieve ~0.15–0.2 dB/km at 1550 nm. At this rate, power halves every ~15–20 km.'));
+
+  let ch=null;
+  function update(){
+    // Canvas — ray fade visualization
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    const fh=H*.12,cy=H*.4,x0=60,x1=W-60;
+    ctx.fillStyle='rgba(30,41,59,.8)';ctx.fillRect(x0,cy-fh*1.6,x1-x0,fh*3.2);
+    const cg=ctx.createLinearGradient(x0,cy-fh,x0,cy+fh);
+    cg.addColorStop(0,'rgba(0,212,255,.1)');cg.addColorStop(.5,'rgba(0,212,255,.18)');cg.addColorStop(1,'rgba(0,212,255,.1)');
+    ctx.fillStyle=cg;ctx.fillRect(x0,cy-fh,x1-x0,fh*2);
+    drawGlowLine(ctx,x0,cy-fh,x1,cy-fh,'rgba(0,212,255,.4)',1,2);
+    drawGlowLine(ctx,x0,cy+fh,x1,cy+fh,'rgba(0,212,255,.4)',1,2);
+
+    // Fading beam
+    const steps=60;
+    for(let i=0;i<steps;i++){
+      const x=x0+i*(x1-x0)/steps;
+      const frac=i/steps;
+      const P=P0*Math.pow(10,-alpha*L*frac/10);
+      const brightness=P/P0;
+      ctx.save();
+      ctx.strokeStyle=`rgba(0,212,255,${brightness*.85})`;
+      ctx.lineWidth=2.5;ctx.shadowColor='#00d4ff';ctx.shadowBlur=brightness*12;
+      ctx.beginPath();ctx.moveTo(x,cy);ctx.lineTo(x+(x1-x0)/steps,cy);ctx.stroke();
+      ctx.restore();
+    }
+
+    // Labels
+    label(ctx,`P₀ = ${P0.toFixed(1)} mW`,x0+10,cy-fh-14,'rgba(0,212,255,.7)',11,'left');
+    const PL=P0*Math.pow(10,-alpha*L/10);
+    label(ctx,`P(L) = ${PL.toFixed(3)} mW`,x1-10,cy-fh-14,'rgba(0,212,255,.45)',11,'right');
+    label(ctx,`L = ${L} km`,(x0+x1)/2,cy+fh+22,'rgba(148,163,184,.5)',11);
+    drawGlowLine(ctx,x0,cy+fh+14,x1,cy+fh+14,'rgba(0,212,255,.2)',1,0);
+    ctx.save();ctx.strokeStyle='rgba(0,212,255,.4)';ctx.lineWidth=1.5;ctx.shadowColor='#00d4ff';ctx.shadowBlur=6;
+    ctx.beginPath();ctx.moveTo(x0,cy+fh+10);ctx.lineTo(x0,cy+fh+18);ctx.moveTo(x1,cy+fh+10);ctx.lineTo(x1,cy+fh+18);ctx.stroke();ctx.restore();
+
+    // Outputs
+    const dB=alpha*L;
+    set('at-p',PL.toFixed(4)+' mW');
+    set('at-db',dB.toFixed(2)+' dB',dB>20?'bad':dB>10?'warn':'good');
+    set('at-p50',(P0*Math.pow(10,-alpha*50/10)).toFixed(4)+' mW');
+
+    // Chart
+    const xs=[],ys=[];
+    for(let l=0;l<=Math.max(L,10);l+=Math.max(1,Math.floor(L/50))){
+      xs.push(l);ys.push(P0*Math.pow(10,-alpha*l/10));
+    }
+    if(ch){ch.destroy();ch=null;}
+    chartInst=ch=new Chart($('chartCanvas'),{type:'line',data:{labels:xs,datasets:[{label:'Power (mW)',data:ys,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.08)',borderWidth:2,pointRadius:0,tension:.4,fill:true}]},options:{...CDEFS,plugins:{...CDEFS.plugins,title:{display:true,text:'Power vs Distance',color:'#64748b',font:{family:'JetBrains Mono',size:11}}},scales:{x:{...CDEFS.scales.x,title:{display:true,text:'Distance (km)',color:'#64748b',font:{size:10}}},y:{...CDEFS.scales.y,title:{display:true,text:'Power (mW)',color:'#64748b',font:{size:10}}}}}});
+  }
+  update();
+};
+
+/* ─────────────────────────────────────────────
+   6. FIBER BANDWIDTH
+───────────────────────────────────────────── */
+INIT.bandwidth=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let D=17,dl=1,L=50; // D ps/(nm·km), dl nm, L km
+  chartArea.style.display='block'; chartArea.style.height='180px';
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Parameters</div>';
+  p.appendChild(mkOuts([['Pulse broadening Δτ','bw-dt'],['Bandwidth BW','bw-bw'],['Max bit rate','bw-br']]));
+  p.appendChild(mkSlider('bw-d','DISPERSION D',1,100,1,17,' ps/(nm·km)',0,v=>{D=v;update();}));
+  p.appendChild(mkSlider('bw-dl','SOURCE Δλ',0.1,5,.1,1,' nm',1,v=>{dl=v;update();}));
+  p.appendChild(mkSlider('bw-l','FIBER LENGTH L',1,200,1,50,' km',0,v=>{L=v;update();}));
+  p.appendChild(mkFbox('Δτ = |D| · L · Δλ &nbsp;·&nbsp; BW = 0.44 / Δτ','Chromatic dispersion broadens pulses, capping the achievable bit-rate over a given length.'));
+  p.appendChild(mkThy('FIBER BANDWIDTH','In single-mode fibers, chromatic dispersion (waveguide + material) broadens short pulses proportionally to D, Δλ and length.<br><br>A broader pulse overlaps with its neighbours → the modulation bandwidth decreases. Dispersion-shifted fibers minimize D at 1550 nm.'));
+
+  let ch=null;
+  function update(){
+    const dt_ps=Math.abs(D)*L*dl; // picoseconds
+    const dt_s=dt_ps*1e-12;
+    const BW_Hz=0.44/dt_s;
+    const BW_MHz=BW_Hz/1e6;
+    set('bw-dt',dt_ps.toFixed(2)+' ps');
+    set('bw-bw',(BW_MHz).toFixed(2)+' MHz',BW_MHz>1000?'good':BW_MHz>100?'warn':'bad');
+    set('bw-br',(BW_MHz/1e3).toFixed(1)+' Gb/s');
+
+    // Pulse canvas
+    const W=cv.width,H=cv.height*0.7,cy=H*.5;
+    ctx.clearRect(0,0,W,cv.height);
+
+    // Input pulse (narrow gaussian)
+    const sigIn=W*.04, cxIn=W*.22;
+    // Output pulse (broadened)
+    const sigOut=Math.min(W*.3, sigIn+dt_ps*W*.0008), cxOut=W*.72;
+
+    function drawGauss(cx,sig,color,alpha=.8,label=''){
+      const pts=[];for(let x=cx-3.5*sig;x<=cx+3.5*sig;x+=1){
+        const y=cy-Math.exp(-((x-cx)**2)/(2*sig*sig))*H*.35;
+        pts.push([x,y]);
+      }
+      ctx.save();
+      ctx.beginPath();pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));
+      ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.shadowColor=color;ctx.shadowBlur=14;ctx.globalAlpha=alpha;ctx.stroke();
+      ctx.lineTo(pts[pts.length-1][0],cy);ctx.lineTo(pts[0][0],cy);ctx.closePath();
+      ctx.fillStyle=color.replace('ff','22');ctx.globalAlpha=.25;ctx.fill();
+      ctx.restore();
+      if(label) { ctx.save();ctx.fillStyle=color;ctx.font='11px JetBrains Mono';ctx.textAlign='center';ctx.fillText(label,cx,cy-H*.38);ctx.restore(); }
+    }
+
+    ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(40,cy);ctx.lineTo(W-40,cy);ctx.stroke();
+
+    drawGauss(cxIn,sigIn,'#00d4ff',.9,'Input pulse');
+    drawGauss(cxOut,sigOut,'#f43f5e',.75,'Output pulse (broadened)');
+
+    // Annotations
+    label(ctx,`Fiber length L = ${L} km × D = ${D} ps/(nm·km) × Δλ = ${dl.toFixed(1)} nm`,W/2,cy+28,'rgba(148,163,184,.5)',10.5);
+    label(ctx,`Δτ = ${dt_ps.toFixed(2)} ps`,cxIn+(cxOut-cxIn)*.5,cy+48,'rgba(245,158,11,.7)',11);
+
+    // Chart: BW vs length
+    const xs=[],ys=[];
+    for(let l=1;l<=Math.max(200,L*1.5);l+=2){
+      const dt=Math.abs(D)*l*dl*1e-12;
+      xs.push(l);ys.push((0.44/dt)/1e6);
+    }
+    if(ch){ch.destroy();ch=null;}
+    chartInst=ch=new Chart($('chartCanvas'),{type:'line',data:{labels:xs,datasets:[{label:'Bandwidth (MHz)',data:ys,borderColor:'#67e8f9',backgroundColor:'rgba(103,232,249,.08)',borderWidth:2,pointRadius:0,tension:.4,fill:true}]},options:{...CDEFS,plugins:{...CDEFS.plugins},scales:{x:{...CDEFS.scales.x,title:{display:true,text:'Length (km)',color:'#64748b',font:{size:10}}},y:{...CDEFS.scales.y,title:{display:true,text:'BW (MHz)',color:'#64748b',font:{size:10}}}}}});
+  }
+  update();
+};
+
+/* ─────────────────────────────────────────────
+   7. POLARIZATION
+───────────────────────────────────────────── */
+INIT.polarization=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let mode='linear',angle=0,phase=0,t=0;
+  sBadge.innerHTML='<button class="mode-btn active" data-pm="linear">LINEAR</button><button class="mode-btn" data-pm="circular">CIRCULAR</button><button class="mode-btn" data-pm="elliptical">ELLIPTICAL</button>';
+  sBadge.querySelectorAll('.mode-btn').forEach(b=>b.addEventListener('click',()=>{
+    mode=b.dataset.pm; sBadge.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('active',x===b));
+  }));
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">E-Field Parameters</div>';
+  p.appendChild(mkSlider('pol-ang','POLARIZATION ANGLE',0,180,1,0,'°',0,v=>{angle=v*Math.PI/180;}));
+  p.appendChild(mkSlider('pol-phase','PHASE DIFFERENCE δ',0,360,1,0,'°',0,v=>{phase=v*Math.PI/180;}));
+  p.appendChild(mkFbox('E = E₀·cos(ωt − kz + δ)','The polarization state is determined by the relative amplitude and phase of x and y E-field components.'));
+  p.appendChild(mkThy('POLARIZATION','Light is a transverse electromagnetic wave. The polarization describes the direction of the electric field vector.<br><br><span class="hl">Linear:</span> E oscillates in one plane.<br><span class="hl">Circular:</span> E rotates with constant amplitude (δ=90°, equal amplitudes).<br><span class="hl">Elliptical:</span> General case — E traces an ellipse.'));
+
+  function loop(){
+    if(curMod!=='polarization') return;
+    const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+
+    // Wave propagation axis (z)
+    drawGlowLine(ctx,80,cy,W-80,cy,'rgba(255,255,255,.1)',1,0);
+    label(ctx,'z →',W-60,cy-8,'rgba(255,255,255,.2)',11);
+
+    // 3D perspective — draw E-field oscillation along z
+    const npts=100, wl=W-200;
+    const Ex=[], Ey=[];
+    for(let i=0;i<=npts;i++){
+      const z=i/npts, kz=z*6*Math.PI, Et=t*.08+kz;
+      let ex=0,ey=0;
+      if(mode==='linear'){ex=Math.cos(Et+angle);ey=0;}
+      else if(mode==='circular'){ex=Math.cos(Et);ey=Math.sin(Et);}
+      else{ex=Math.cos(Et);ey=0.6*Math.sin(Et+phase);}
+      Ex.push({x:80+z*wl, y:cy-ey*60, z});
+      Ey.push({x:80+z*wl, y:cy-ex*60-ey*20});
+    }
+
+    // Draw E-field
+    ctx.save();ctx.lineWidth=2.5;ctx.shadowBlur=12;
+    if(mode==='linear'){
+      ctx.strokeStyle='#00d4ff';ctx.shadowColor='#00d4ff';
+      ctx.beginPath();Ex.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();
+    } else if(mode==='circular'){
+      ctx.strokeStyle='#a78bfa';ctx.shadowColor='#a78bfa';
+      ctx.beginPath();Ex.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();
+      ctx.strokeStyle='#f472b6';ctx.shadowColor='#f472b6';
+      ctx.beginPath();Ey.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();
+    } else {
+      ctx.strokeStyle='#00d4ff';ctx.shadowColor='#00d4ff';
+      ctx.beginPath();Ex.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();
+      ctx.strokeStyle='#f472b6';ctx.shadowColor='#f472b6';
+      ctx.beginPath();Ey.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();
+    }
+    ctx.restore();
+
+    // Poincaré dot (rightmost)
+    const last=Ex[npts];
+    ctx.save();ctx.beginPath();ctx.arc(last.x,last.y,6,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.shadowColor='#00d4ff';ctx.shadowBlur=16;ctx.fill();ctx.restore();
+
+    // Lissajous figure (top-right inset)
+    const bx=W-140,by=100,br=55;
+    ctx.save();ctx.strokeStyle='rgba(0,212,255,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle=mode==='circular'?'#a78bfa':'#00d4ff';ctx.lineWidth=1.5;ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=8;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const ft=i*.05+t*.08;
+      let ex=0,ey=0;
+      if(mode==='linear'){ex=Math.cos(ft+angle);ey=0;}
+      else if(mode==='circular'){ex=Math.cos(ft);ey=Math.sin(ft);}
+      else{ex=Math.cos(ft);ey=0.6*Math.sin(ft+phase);}
+      const px2=bx+ex*br,py2=by-ey*br;
+      i===0?ctx.moveTo(px2,py2):ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    label(ctx,'Polarization',bx,by+br+14,'rgba(148,163,184,.5)',10);
+    ctx.restore();
+
+    t++; animId=requestAnimationFrame(loop);
+  }
+  loop();
+};
+
+/* ─────────────────────────────────────────────
+   8. BREWSTER ANGLE
+───────────────────────────────────────────── */
+INIT.brewster=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let n1=1.0,n2=1.5,theta=56.3;
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Parameters</div>';
+  p.appendChild(mkOuts([['Brewster angle θB','br-tb'],['Refracted angle','br-tr'],['p-pol reflected','br-pr']]));
+  p.appendChild(mkSlider('br-n1','INDEX n₁',1.0,2.0,.01,1.0,'',2,v=>{n1=v;update();}));
+  p.appendChild(mkSlider('br-n2','INDEX n₂',1.0,2.5,.01,1.5,'',2,v=>{n2=v;update();}));
+  p.appendChild(mkSlider('br-ang','INCIDENT ANGLE',1,89,0.5,56.3,'°',1,v=>{theta=v;draw();}));
+  p.appendChild(mkFbox('θ_B = arctan(n₂/n₁)','At Brewster angle, reflected light is completely s-polarized; p-component = 0.'));
+  p.appendChild(mkThy('BREWSTER ANGLE','At Brewster\'s angle, the reflected and refracted rays are exactly 90° apart. The p-polarized component cancels completely in reflection, leaving only s-polarized light reflected.<br><br>Used in laser windows (Brewster windows) for polarized beams with zero reflection loss.'));
+
+  function update(){
+    const tb=Math.atan2(n2,n1)*180/Math.PI;
+    const sl=$('br-ang'); if(sl){sl.value=tb;const ev=document.getElementById('vbr-ang');if(ev)ev.textContent=tb.toFixed(1)+'°';const pp=((tb-1)/(89-1))*100;sl.style.setProperty('--p',pp+'%');}
+    theta=tb; draw();
+  }
+
+  function draw(){
+    const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+
+    const tB=Math.atan2(n2,n1)*180/Math.PI;
+    const atBrewster=Math.abs(theta-tB)<1.5;
+    const t1r=theta*Math.PI/180;
+    const sinT2=n1*Math.sin(t1r)/n2, t2r=Math.asin(Math.min(1,sinT2));
+
+    set('br-tb',tB.toFixed(2)+'°');
+    set('br-tr',(t2r*180/Math.PI).toFixed(2)+'°');
+    set('br-pr',atBrewster?'≈ 0 (zero!)':'> 0',atBrewster?'good':'warn');
+
+    // Media backgrounds
+    ctx.fillStyle='rgba(0,212,255,.05)';ctx.fillRect(0,0,W,cy);
+    ctx.fillStyle='rgba(124,58,237,.08)';ctx.fillRect(0,cy,W,H);
+    ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,cy-180);ctx.lineTo(cx,cy+150);ctx.stroke();
+    ctx.restore();
+
+    label(ctx,`n₁ = ${n1.toFixed(2)}`,30,30,'rgba(0,212,255,.6)',11,'left');
+    label(ctx,`n₂ = ${n2.toFixed(2)}`,30,cy+24,'rgba(167,139,250,.6)',11,'left');
+
+    const len=160;
+    // Incident ray
+    drawArrow(ctx,cx-len*Math.sin(t1r),cy-len*Math.cos(t1r),cx,cy,'#00d4ff');
+    label(ctx,`θ = ${theta.toFixed(1)}°`,cx-len*.45*Math.sin(t1r)-18,cy-len*.4*Math.cos(t1r)-6,'#00d4ff',11);
+
+    // Reflected ray (s-only at Brewster)
+    drawArrow(ctx,cx,cy,cx+len*Math.sin(t1r),cy-len*Math.cos(t1r),atBrewster?'#f472b6':'#7c3aed');
+    label(ctx,atBrewster?'s-only (p=0)':'reflected',cx+len*.4*Math.sin(t1r)+12,cy-len*.35*Math.cos(t1r)-8,atBrewster?'#f472b6':'#a78bfa',10);
+
+    // Refracted ray
+    drawArrow(ctx,cx,cy,cx+len*Math.sin(t2r),cy+len*Math.cos(t2r),'#10b981');
+
+    // At Brewster — draw perpendicularity indicator
+    if(atBrewster){
+      ctx.save();ctx.strokeStyle='rgba(244,63,94,.4)';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+      const rx1=cx+len*Math.sin(t1r), ry1=cy-len*Math.cos(t1r);
+      const rx2=cx+len*Math.sin(t2r), ry2=cy+len*Math.cos(t2r);
+      ctx.beginPath();ctx.moveTo(rx1,ry1);ctx.lineTo(rx2,ry2);ctx.stroke();ctx.restore();
+      label(ctx,'90°',cx+len*.6*Math.sin(t1r)+10,cy,'rgba(244,63,94,.7)',11);
+    }
+
+    // Bar chart of s/p reflection
+    const barX=W-140,barY=cy-80;
+    const rp=atBrewster?0:Math.pow((n1*Math.cos(t1r)-n2*Math.cos(t2r))/(n1*Math.cos(t1r)+n2*Math.cos(t2r)),2);
+    const rs=Math.pow((n1*Math.cos(t2r)-n2*Math.cos(t1r))/(n1*Math.cos(t2r)+n2*Math.cos(t1r)),2);
+    const bh=80;
+    ctx.fillStyle='rgba(13,21,38,.7)';ctx.fillRect(barX-10,barY-10,130,bh+30);
+    ctx.fillStyle='rgba(0,212,255,.7)';ctx.fillRect(barX,barY+bh*(1-rs),22,bh*rs);
+    ctx.fillStyle='rgba(244,63,94,.7)';ctx.fillRect(barX+30,barY+bh*(1-rp),22,Math.max(1,bh*rp));
+    label(ctx,'Rs',barX+11,barY+bh+14,'rgba(0,212,255,.6)',10);
+    label(ctx,'Rp',barX+41,barY+bh+14,'rgba(244,63,94,.6)',10);
+    label(ctx,`Brewster: ${tB.toFixed(1)}°`,barX+30,barY-20,'rgba(148,163,184,.5)',10);
+  }
+  update();
+};
+
+/* ─────────────────────────────────────────────
+   9. SCATTERING OF LIGHT
+───────────────────────────────────────────── */
+INIT.scattering=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let lambda=450,particleR=20,intensity=1,t=0;
+
+  function wlToRgb(wl){
+    let r=0,g=0,b=0;
+    if(wl<380)return[80,0,120];
+    if(wl<440){r=(440-wl)/(440-380);b=1;}
+    else if(wl<490){g=(wl-440)/(490-440);b=1;}
+    else if(wl<510){g=1;b=(510-wl)/(510-490);}
+    else if(wl<580){r=(wl-510)/(580-510);g=1;}
+    else if(wl<645){r=1;g=(645-wl)/(645-580);}
+    else{r=1;}
+    return[Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+  }
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Parameters</div>';
+  p.appendChild(mkOuts([['Rayleigh scatter I','sc-ri'],['Mie scatter I','sc-mi'],['Sky color','sc-sky']]));
+  p.appendChild(mkSlider('sc-wl','WAVELENGTH λ',380,700,1,450,' nm',0,v=>{lambda=v;draw();}));
+  p.appendChild(mkSlider('sc-pr','PARTICLE RADIUS',1,100,1,20,' nm',0,v=>{particleR=v;draw();}));
+  p.appendChild(mkSlider('sc-int','INTENSITY',0.1,2,.05,1,'',1,v=>{intensity=v;draw();}));
+  p.appendChild(mkFbox('I_R ∝ 1/λ⁴ &nbsp;·&nbsp; I_M ∝ λ⁻⁰·²','Short wavelengths (blue) scatter far more than long (red) — explains sky color.'));
+  p.appendChild(mkThy('SCATTERING','<span class="hl">Rayleigh scattering</span> (particles ≪ λ): intensity ∝ 1/λ⁴. Blue light scatters ~10× more than red — this colors the sky blue and sunsets red.<br><br><span class="hl">Mie scattering</span> (particles ≈ λ): nearly wavelength-independent — clouds appear white.'));
+
+  function draw(){
+    if(animId){cancelAnimationFrame(animId);animId=null;}
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+
+    const [wr,wg,wb]=wlToRgb(lambda);
+    const rayColor=`rgb(${wr},${wg},${wb})`;
+    const rayColorA=`rgba(${wr},${wg},${wb},`;
+
+    // Incoming beam
+    const cx=W*.3,cy=H/2;
+    for(let i=0;i<8;i++){
+      const y=cy+(i-3.5)*10;
+      const fade=1-Math.abs(i-3.5)/5;
+      ctx.save();ctx.strokeStyle=rayColorA+(fade*.7)+')';ctx.lineWidth=1.5;ctx.shadowColor=rayColor;ctx.shadowBlur=8*intensity;
+      ctx.beginPath();ctx.moveTo(80,y);ctx.lineTo(cx,y);ctx.stroke();ctx.restore();
+    }
+
+    // Particle
+    ctx.save();ctx.beginPath();ctx.arc(cx,cy,Math.max(6,particleR*.15),0,Math.PI*2);
+    ctx.fillStyle=`rgba(${wr},${wg},${wb},.25)`;ctx.strokeStyle=rayColor;ctx.lineWidth=2;ctx.shadowColor=rayColor;ctx.shadowBlur=20*intensity;
+    ctx.fill();ctx.stroke();ctx.restore();
+
+    // Rayleigh scatter (1/lambda^4 factor, relative)
+    const ref=450;
+    const rayleigh=Math.pow(ref/lambda,4)*intensity;
+    const mieS=Math.pow(ref/lambda,0.2)*intensity;
+    set('sc-ri',(rayleigh*100).toFixed(1)+'%');
+    set('sc-mi',(mieS*100).toFixed(1)+'%');
+    const skyColors=['Deep Violet','Violet','Blue','Cyan-Blue','Sky Blue','Green','Yellow-Green','Yellow','Orange','Red'];
+    const skyIdx=Math.min(9,Math.floor((lambda-380)/32));
+    set('sc-sky',skyColors[skyIdx]);
+
+    // Scattered rays — Rayleigh (mostly perpendicular)
+    const nRay=16;
+    for(let i=0;i<nRay;i++){
+      const a=(i/nRay)*Math.PI*2;
+      const cos2=Math.cos(a)*Math.cos(a);
+      const sc=rayleigh*(1+cos2)*.5;
+      const len2=sc*80+20;
+      const alpha=Math.min(.9,sc*.5+.1);
+      ctx.save();ctx.strokeStyle=rayColorA+alpha+')';ctx.lineWidth=1+sc*.5;ctx.shadowColor=rayColor;ctx.shadowBlur=sc*12;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+len2*Math.cos(a),cy+len2*Math.sin(a));ctx.stroke();ctx.restore();
+    }
+
+    // Transmitted beam (weakened)
+    const transAlpha=Math.max(.05,1-rayleigh*.2);
+    ctx.save();ctx.strokeStyle=rayColorA+transAlpha+')';ctx.lineWidth=3*intensity;ctx.shadowColor=rayColor;ctx.shadowBlur=12;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(W-80,cy);ctx.stroke();ctx.restore();
+
+    // Spectrum bar
+    const bx=80,bw=W-160,bh=24,by=H-60;
+    for(let i=0;i<bw;i++){
+      const wl2=380+i*(700-380)/bw;
+      const [rr,rg,rb2]=wlToRgb(wl2);
+      ctx.fillStyle=`rgb(${rr},${rg},${rb2})`;
+      ctx.fillRect(bx+i,by,1,bh);
+    }
+    ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;ctx.strokeRect(bx,by,bw,bh);
+    const markerX=bx+(lambda-380)*bw/(700-380);
+    ctx.save();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.shadowColor='#fff';ctx.shadowBlur=8;
+    ctx.beginPath();ctx.moveTo(markerX,by-6);ctx.lineTo(markerX,by+bh+6);ctx.stroke();ctx.restore();
+    label(ctx,`λ = ${lambda} nm`,markerX,by-10,'rgba(255,255,255,.7)',10);
+    label(ctx,'380 nm',bx,by+bh+14,'rgba(148,163,184,.4)',9,'left');
+    label(ctx,'700 nm',bx+bw,by+bh+14,'rgba(148,163,184,.4)',9,'right');
+  }
+  draw();
+};
+
+/* ─────────────────────────────────────────────
+   10. LED / OLED EMISSION
+───────────────────────────────────────────── */
+INIT.emission=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let voltage=2.5,t=0;
+
+  function wlToRgb(wl){
+    let r=0,g=0,b=0;
+    if(wl<380)return[80,0,120];
+    if(wl<440){r=(440-wl)/(440-380);b=1;}
+    else if(wl<490){g=(wl-440)/(490-440);b=1;}
+    else if(wl<510){g=1;b=(510-wl)/(510-490);}
+    else if(wl<580){r=(wl-510)/(580-510);g=1;}
+    else if(wl<645){r=1;g=(645-wl)/(645-580);}
+    else{r=1;}
+    return[Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+  }
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">LED Parameters</div>';
+  p.appendChild(mkOuts([['Photon energy','em-E'],['Wavelength λ','em-wl'],['Emission color','em-col']]));
+  p.appendChild(mkSlider('em-v','FORWARD VOLTAGE V',1.2,5,.01,2.5,' V',2,v=>{voltage=v;draw();}));
+  p.appendChild(mkFbox('E = q·V = h·c/λ','The bandgap energy of the semiconductor determines the emitted photon wavelength.'));
+  p.appendChild(mkThy('LED EMISSION','An LED forward-biases a p-n junction. Electrons from the n-side recombine with holes from the p-side, releasing energy as photons.<br><br>The photon energy equals the bandgap energy Eg ≈ qV. Higher voltage → shorter wavelength (bluer) light.'));
+
+  function draw(){
+    if(animId){cancelAnimationFrame(animId);animId=null;}
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+
+    const h=6.626e-34,c=3e8,eV=1.6e-19;
+    const E=voltage*eV;
+    const lambda=Math.round(h*c/E*1e9);
+    const safeWl=Math.max(380,Math.min(700,lambda));
+    const [wr,wg,wb]=wlToRgb(safeWl);
+    const lColor=`rgb(${wr},${wg},${wb})`;
+
+    set('em-E',voltage.toFixed(2)+' eV');
+    set('em-wl',lambda+' nm');
+    const cols=['Infrared','Deep Red','Red','Orange','Yellow','Green','Cyan','Blue','Violet','UV'];
+    const ci=Math.max(0,Math.min(9,Math.floor((safeWl-380)/32)));
+    set('em-col',cols[ci]);
+
+    // Junction cross section
+    const jx=W/2,jh=H*.3,jy=H/2;
+    // P-region
+    ctx.fillStyle='rgba(244,63,94,.15)';ctx.fillRect(jx-200,jy-jh,200,jh*2);
+    label(ctx,'P-type',jx-100,jy,'rgba(244,63,94,.6)',13);
+    // N-region
+    ctx.fillStyle='rgba(0,212,255,.12)';ctx.fillRect(jx,jy-jh,200,jh*2);
+    label(ctx,'N-type',jx+100,jy,'rgba(0,212,255,.6)',13);
+    // Junction line
+    ctx.save();ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=2;ctx.shadowColor='#fff';ctx.shadowBlur=8;
+    ctx.beginPath();ctx.moveTo(jx,jy-jh);ctx.lineTo(jx,jy+jh);ctx.stroke();ctx.restore();
+
+    // Animated e-h recombination
+    const nPairs=Math.floor(voltage*2);
+    if(!INIT.emission._particles) INIT.emission._particles=[];
+    const parts=INIT.emission._particles;
+    if(t%20===0 && parts.length<nPairs*2){
+      parts.push({x:jx+50+Math.random()*100,y:jy-jh*.5+Math.random()*jh,vx:-(1+Math.random()),vy:(Math.random()-.5)*.5,type:'e',life:1});
+      parts.push({x:jx-50-Math.random()*100,y:jy-jh*.5+Math.random()*jh,vx:(1+Math.random()),vy:(Math.random()-.5)*.5,type:'h',life:1});
+    }
+
+    const dead=[];
+    parts.forEach((pt,i)=>{
+      pt.x+=pt.vx; pt.y+=pt.vy; pt.life-=.005;
+      if(pt.life<=0){dead.push(i);return;}
+      ctx.save();ctx.beginPath();ctx.arc(pt.x,pt.y,5,0,Math.PI*2);
+      ctx.fillStyle=pt.type==='e'?'rgba(0,212,255,.8)':'rgba(244,63,94,.8)';
+      ctx.shadowColor=pt.type==='e'?'#00d4ff':'#f43f5e';ctx.shadowBlur=10;ctx.fill();
+      label(ctx,pt.type==='e'?'e⁻':'h⁺',pt.x,pt.y-10,pt.type==='e'?'rgba(0,212,255,.7)':'rgba(244,63,94,.7)',9);
+
+      // Check proximity for recombination
+      const pair=parts.find((p2,j)=>j!==i&&p2.type!==pt.type&&Math.hypot(p2.x-pt.x,p2.y-pt.y)<20);
+      if(pair){
+        // Emit photon burst
+        for(let k=0;k<6;k++){
+          const a=k*Math.PI/3;
+          ctx.save();ctx.strokeStyle=lColor;ctx.lineWidth=1.5;ctx.shadowColor=lColor;ctx.shadowBlur=20;
+          ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(pt.x+25*Math.cos(a),pt.y+25*Math.sin(a));ctx.stroke();ctx.restore();
+        }
+        dead.push(i);dead.push(parts.indexOf(pair));
+      }
+      ctx.restore();
+    });
+    dead.forEach(i=>parts.splice(i,1));
+
+    // Glow on junction
+    const grd=ctx.createRadialGradient(jx,jy,0,jx,jy,80);
+    grd.addColorStop(0,`rgba(${wr},${wg},${wb},.35)`);
+    grd.addColorStop(1,'transparent');
+    ctx.fillStyle=grd;ctx.fillRect(jx-100,jy-100,200,200);
+
+    // Emitted light rays
+    const nray=8;
+    for(let i=0;i<nray;i++){
+      const a=((i/nray)*Math.PI)-(Math.PI/2);
+      const len2=40+Math.random()*60;
+      ctx.save();ctx.strokeStyle=`rgba(${wr},${wg},${wb},${.3+.4*Math.random()})`;ctx.lineWidth=1.5;ctx.shadowColor=lColor;ctx.shadowBlur=14;
+      ctx.beginPath();ctx.moveTo(jx-10,jy);ctx.lineTo(jx-10+len2*Math.cos(a),jy+len2*Math.sin(a));ctx.stroke();ctx.restore();
+    }
+
+    // Voltage label
+    label(ctx,`V = ${voltage.toFixed(2)} V → λ = ${safeWl} nm`,W/2,H-40,'rgba(148,163,184,.55)',11);
+
+    t++; animId=requestAnimationFrame(()=>{if(curMod==='emission')draw();});
+  }
+  draw();
+};
+
+/* ─────────────────────────────────────────────
+   11. LIGHT ABSORPTION
+───────────────────────────────────────────── */
+INIT.absorption=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let alpha=1.0,I0=1.0,L=5;
+  chartArea.style.display='block'; chartArea.style.height='175px';
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Parameters</div>';
+  p.appendChild(mkOuts([['Output intensity I(L)','ab-i'],['Absorption (%)','ab-pct'],['Penetration depth','ab-pd']]));
+  p.appendChild(mkSlider('ab-a','ABSORPTION COEFF α',0.01,10,.01,1,' cm⁻¹',2,v=>{alpha=v;update();}));
+  p.appendChild(mkSlider('ab-i0','INPUT INTENSITY I₀',0.1,5,.1,1,' (norm.)',1,v=>{I0=v;update();}));
+  p.appendChild(mkSlider('ab-l','MATERIAL DEPTH',0.1,20,.1,5,' cm',1,v=>{L=v;update();}));
+  p.appendChild(mkFbox('I(x) = I₀ · e^(−α·x)','The penetration depth δ = 1/α is where intensity drops to 1/e ≈ 37%.'));
+  p.appendChild(mkThy('BEER-LAMBERT LAW','Light is absorbed exponentially as it passes through a medium. The absorption coefficient α depends on the material and wavelength.<br><br>At depth x = 1/α (penetration depth), intensity is I₀/e ≈ 37% of initial. Highly absorbing materials have large α.'));
+
+  let ch=null;
+  function update(){
+    const IL=I0*Math.exp(-alpha*L);
+    const pct=(1-IL/I0)*100;
+    const pd=1/alpha;
+    set('ab-i',IL.toFixed(4));
+    set('ab-pct',pct.toFixed(1)+'%',pct>80?'bad':pct>40?'warn':'good');
+    set('ab-pd',pd.toFixed(3)+' cm');
+
+    // Canvas — gradient beam
+    const W=cv.width,H=cv.height,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+    const bx=80,bw=W-160,bh=70;
+    // Material rectangle
+    ctx.fillStyle='rgba(16,185,129,.08)';ctx.fillRect(bx,cy-bh,bw,bh*2);
+    ctx.strokeStyle='rgba(16,185,129,.3)';ctx.lineWidth=1.5;ctx.strokeRect(bx,cy-bh,bw,bh*2);
+
+    // Gradient beam
+    const grd=ctx.createLinearGradient(bx,0,bx+bw,0);
+    grd.addColorStop(0,`rgba(0,212,255,${I0*.9})`);
+    grd.addColorStop(1,`rgba(0,212,255,${Math.max(.02,IL/I0*.8)})`);
+    ctx.fillStyle=grd;ctx.fillRect(bx,cy-12,bw,24);
+
+    // Slice lines showing decay
+    for(let i=0;i<=10;i++){
+      const xf=bx+i*bw/10;
+      const Ix=I0*Math.exp(-alpha*i*L/10);
+      const a=Ix/I0;
+      ctx.save();ctx.strokeStyle=`rgba(0,212,255,${a*.5})`;ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(xf,cy-bh+4);ctx.lineTo(xf,cy+bh-4);ctx.stroke();ctx.restore();
+    }
+
+    // Penetration depth marker
+    if(pd<=L){
+      const pdX=bx+(pd/L)*bw;
+      ctx.save();ctx.strokeStyle='rgba(245,158,11,.7)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(pdX,cy-bh-10);ctx.lineTo(pdX,cy+bh+10);ctx.stroke();ctx.restore();
+      label(ctx,'1/e depth',pdX,cy-bh-18,'rgba(245,158,11,.6)',10);
+    }
+
+    label(ctx,`I₀ = ${I0.toFixed(1)}`,bx-10,cy-bh-14,'rgba(0,212,255,.7)',11,'right');
+    label(ctx,`I(L) = ${IL.toFixed(3)}`,bx+bw+10,cy-bh-14,'rgba(0,212,255,.45)',11,'left');
+    label(ctx,`α = ${alpha.toFixed(2)} cm⁻¹  ·  L = ${L.toFixed(1)} cm`,(bx+bx+bw)/2,cy+bh+24,'rgba(148,163,184,.5)',11);
+
+    // Chart
+    const xs=[],ys=[];
+    for(let x=0;x<=L;x+=L/80){ xs.push(x.toFixed(2)); ys.push(I0*Math.exp(-alpha*x)); }
+    if(ch){ch.destroy();ch=null;}
+    chartInst=ch=new Chart($('chartCanvas'),{type:'line',data:{labels:xs,datasets:[{label:'Intensity',data:ys,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.08)',borderWidth:2,pointRadius:0,tension:.4,fill:true}]},options:{...CDEFS,scales:{x:{...CDEFS.scales.x,title:{display:true,text:'Depth (cm)',color:'#64748b',font:{size:10}}},y:{...CDEFS.scales.y,title:{display:true,text:'Intensity',color:'#64748b',font:{size:10}}}}}});
+  }
+  update();
+};
+
+/* ─────────────────────────────────────────────
+   12. SOLAR CELL
+───────────────────────────────────────────── */
+INIT.solar=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let light=1.0,T=300;
+  chartArea.style.display='block'; chartArea.style.height='175px';
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Solar Cell Parameters</div>';
+  p.appendChild(mkOuts([['Open circuit V_oc','sc-voc'],['Short circuit I_sc','sc-isc'],['Max power P_max','sc-pm']]));
+  p.appendChild(mkSlider('sc-li','LIGHT INTENSITY',0.1,2,.01,1,'× sun',2,v=>{light=v;update();}));
+  p.appendChild(mkSlider('sc-T','TEMPERATURE T',200,400,1,300,' K',0,v=>{T=v;update();}));
+  p.appendChild(mkFbox('I = Iph − I₀(e^(qV/nkT) − 1)','Iph = photocurrent ∝ light intensity. V_oc = (nkT/q)·ln(Iph/I₀+1)'));
+  p.appendChild(mkThy('SOLAR CELL','A solar cell is a p-n junction that converts photons into electron-hole pairs. The photocurrent Iph is proportional to light intensity.<br><br>The open-circuit voltage V_oc increases logarithmically with intensity. The fill factor characterizes how square the I-V curve is.'));
+
+  let ch=null;
+  function update(){
+    const q=1.6e-19,k=1.38e-23,n=1.5;
+    const I0_ref=1e-10, Iph=light*1.0;
+    const I0=I0_ref*Math.pow(T/300,3);
+    const Vt=n*k*T/q;
+    const Voc=Vt*Math.log(Iph/I0+1);
+    const Isc=Iph;
+
+    set('sc-voc',Voc.toFixed(3)+' V');
+    set('sc-isc',(Isc*1000).toFixed(1)+' mA');
+
+    // Find MPP numerically
+    let Pmax=0,Vmpp=0,Impp=0;
+    for(let V=0;V<=Voc;V+=Voc/200){
+      const I=Math.max(0,Iph-I0*(Math.exp(V/Vt)-1));
+      if(I*V>Pmax){Pmax=I*V;Vmpp=V;Impp=I;}
+    }
+    set('sc-pm',(Pmax*1000).toFixed(1)+' mW');
+
+    // Canvas — junction with photons
+    const W=cv.width,H=cv.height,cx=W*.4,jh=H*.28,cy=H/2;
+    ctx.clearRect(0,0,W,H);
+
+    // Cell layers
+    ctx.fillStyle='rgba(245,158,11,.1)';ctx.fillRect(cx-160,cy-jh,80,jh*2);
+    ctx.fillStyle='rgba(0,212,255,.08)';ctx.fillRect(cx-80,cy-jh,160,jh*2);
+    ctx.fillStyle='rgba(16,185,129,.1)';ctx.fillRect(cx+80,cy-jh,80,jh*2);
+    label(ctx,'p+',cx-120,cy,'rgba(245,158,11,.6)',12);
+    label(ctx,'p-n junction',cx,cy,'rgba(0,212,255,.5)',11);
+    label(ctx,'n+',cx+120,cy,'rgba(16,185,129,.6)',12);
+
+    // Incoming photon arrows from top
+    const nph=Math.round(light*6);
+    for(let i=0;i<nph;i++){
+      const px=cx-120+i*(240/nph);
+      ctx.save();ctx.strokeStyle='rgba(255,220,50,.7)';ctx.lineWidth=1.5;ctx.shadowColor='#ffd700';ctx.shadowBlur=10;
+      ctx.beginPath();ctx.moveTo(px,cy-jh-50);ctx.lineTo(px,cy-jh+10);ctx.stroke();
+      // Arrowhead
+      ctx.fillStyle='rgba(255,220,50,.7)';ctx.beginPath();ctx.moveTo(px,cy-jh+10);ctx.lineTo(px-5,cy-jh-5);ctx.lineTo(px+5,cy-jh-5);ctx.closePath();ctx.fill();
+      ctx.restore();
+    }
+
+    // Electron-hole pairs floating out
+    [[cx-40,cy-20,'#00d4ff','e⁻'],[cx+40,cy+20,'#f43f5e','h⁺']].forEach(([x,y,c,txt])=>{
+      ctx.save();ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fillStyle=c;ctx.shadowColor=c;ctx.shadowBlur=14;ctx.fill();ctx.restore();
+      label(ctx,txt,x,y-12,c,10);
+    });
+
+    // Current arrow
+    drawArrow(ctx,cx+180,cy,cx+260,cy,'#10b981');
+    label(ctx,'I →',cx+240,cy-14,'rgba(16,185,129,.7)',11);
+
+    // Voltage label
+    label(ctx,`V_oc = ${Voc.toFixed(3)} V   I_sc = ${(Isc*1000).toFixed(1)} mA`,cx,H-50,'rgba(148,163,184,.5)',11);
+
+    // I-V Chart
+    const Vs=[],Is=[],Ps=[];
+    for(let V=0;V<=Voc*1.1;V+=Voc/100){
+      Vs.push(V.toFixed(3));
+      const I=Math.max(0,Iph-I0*(Math.exp(V/Vt)-1));
+      Is.push(I*1000); Ps.push(I*V*1000);
+    }
+    if(ch){ch.destroy();ch=null;}
+    chartInst=ch=new Chart($('chartCanvas'),{type:'line',data:{labels:Vs,datasets:[{label:'Current (mA)',data:Is,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',borderWidth:2,pointRadius:0,tension:.3,fill:false,yAxisID:'y'},{label:'Power (mW)',data:Ps,borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.08)',borderWidth:2,pointRadius:0,tension:.3,fill:false,yAxisID:'y1'}]},options:{...CDEFS,scales:{x:{...CDEFS.scales.x,title:{display:true,text:'Voltage (V)',color:'#64748b',font:{size:10}}},y:{...CDEFS.scales.y,title:{display:true,text:'Current (mA)',color:'#64748b',font:{size:10}}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#10b981',font:{family:'JetBrains Mono',size:10}}}}}});
+  }
+  update();
+};
+
+/* ─────────────────────────────────────────────
+   13. OPTICAL WAVEGUIDE
+───────────────────────────────────────────── */
+INIT.waveguide=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let n1=1.5,n2=1.0,a=5,lambda=1.55,t=0;
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Waveguide Parameters</div>';
+  p.appendChild(mkOuts([['V-number','wg-v'],['Max modes','wg-m'],['Cut-off width','wg-c']]));
+  p.appendChild(mkSlider('wg-n1','CORE INDEX n₁',1.1,2.5,.01,1.5,'',2,v=>{n1=v;loop();}));
+  p.appendChild(mkSlider('wg-n2','CLADDING n₂',.9,2.4,.01,1.0,'',2,v=>{n2=Math.min(v,n1-.01);loop();}));
+  p.appendChild(mkSlider('wg-a','CORE HALF-WIDTH a',1,20,.5,5,' μm',1,v=>{a=v;loop();}));
+  p.appendChild(mkSlider('wg-lm','WAVELENGTH λ',0.4,2,.01,1.55,' μm',2,v=>{lambda=v;loop();}));
+  p.appendChild(mkFbox('V = (2π·a/λ)·NA','V < 2.405: single mode. Number of modes M ≈ V²/2.'));
+  p.appendChild(mkThy('WAVEGUIDE','The V-number (normalized frequency) determines how many modes a waveguide supports. For V < 2.405, only the fundamental mode propagates — this is the single-mode condition.<br><br>Each mode has a distinct propagation constant β and field pattern across the waveguide cross-section.'));
+
+  function loop(){
+    if(animId){cancelAnimationFrame(animId);animId=null;}
+    const NA=Math.sqrt(Math.max(0,n1*n1-n2*n2));
+    const V=(2*Math.PI*a/lambda)*NA;
+    const M=Math.max(1,Math.floor(V*V/2));
+    const aSM=2.405*lambda/(2*Math.PI*NA);
+    set('wg-v',V.toFixed(3),(V<2.405?'good':'warn'));
+    set('wg-m',V<2.405?'1 (single mode)':M+' modes',(V<2.405?'good':'warn'));
+    set('wg-c',aSM.toFixed(3)+' μm');
+
+    draw();
+  }
+
+  function draw(){
+    const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+    const NA=Math.sqrt(Math.max(0,n1*n1-n2*n2));
+    const V=(2*Math.PI*a/lambda)*NA;
+    const M=Math.max(1,Math.floor(V*V/2));
+    ctx.clearRect(0,0,W,H);
+
+    // Waveguide cross section
+    const fh=Math.min(H*.35,a*15),fw=W*.6,fx=cx-fw/2;
+    ctx.fillStyle='rgba(30,41,59,.85)';ctx.fillRect(fx,cy-fh*2,fw,fh*4);
+    const cg=ctx.createLinearGradient(fx,cy-fh,fx,cy+fh);
+    cg.addColorStop(0,'rgba(0,212,255,.1)');cg.addColorStop(.5,'rgba(0,212,255,.2)');cg.addColorStop(1,'rgba(0,212,255,.1)');
+    ctx.fillStyle=cg;ctx.fillRect(fx,cy-fh,fw,fh*2);
+    drawGlowLine(ctx,fx,cy-fh,fx+fw,cy-fh,'rgba(0,212,255,.6)',1.5,4);
+    drawGlowLine(ctx,fx,cy+fh,fx+fw,cy+fh,'rgba(0,212,255,.6)',1.5,4);
+
+    label(ctx,`Core n₁=${n1.toFixed(2)}, a=${a} μm`,cx,cy,'rgba(0,212,255,.6)',11);
+    label(ctx,`Cladding n₂=${n2.toFixed(2)}`,cx,cy-fh-14,'rgba(167,139,250,.5)',11);
+
+    // Mode field patterns (sinusoidal in core)
+    const showM=Math.min(M,3);
+    const mColors=['#00d4ff','#a78bfa','#10b981'];
+    for(let m=0;m<showM;m++){
+      ctx.save();ctx.strokeStyle=mColors[m];ctx.lineWidth=2;ctx.shadowColor=mColors[m];ctx.shadowBlur=10;
+      ctx.globalAlpha=.7;ctx.beginPath();
+      for(let i=0;i<=fw;i+=2){
+        const x=fx+i;
+        const y_norm=(i/fw)*2-1; // -1 to 1 across core+clad
+        const yrel=y_norm*fh*1.8;
+        let E=0;
+        if(Math.abs(yrel)<=fh){
+          E=Math.cos((m+1)*Math.PI*yrel/(2*fh))*Math.pow(-1,m);
+        } else {
+          const kc=Math.max(0,n2*n2-n1*n1+Math.pow((m+1)*Math.PI/(2*fh),2));
+          E=Math.cos((m+1)*Math.PI/2)*Math.exp(-Math.sqrt(kc)*(Math.abs(yrel)-fh));
+        }
+        const py=cy-E*fh*.65*(1/(m+1));
+        i===0?ctx.moveTo(x,py):ctx.lineTo(x,py);
+      }
+      ctx.stroke();ctx.restore();
+      label(ctx,`Mode ${m+1}`,fx+fw+8,cy+m*16-8,mColors[m],10,'left');
+    }
+
+    // V-number gauge
+    const gaugeX=W*.88,gaugeY=cy,gaugeH=fh*2.5;
+    const vFrac=Math.min(1,V/6);
+    ctx.fillStyle='rgba(13,21,38,.8)';ctx.fillRect(gaugeX-20,gaugeY-gaugeH/2,40,gaugeH);
+    ctx.fillStyle=V<2.405?'rgba(16,185,129,.7)':'rgba(245,158,11,.7)';
+    ctx.fillRect(gaugeX-18,gaugeY+gaugeH/2-4-vFrac*(gaugeH-8),36,vFrac*(gaugeH-8));
+    label(ctx,'V',gaugeX,gaugeY+gaugeH/2+16,'rgba(148,163,184,.5)',10);
+    label(ctx,V.toFixed(2),gaugeX,gaugeY-gaugeH/2-10,'rgba(0,212,255,.7)',10);
+    // Single mode line
+    const smY=gaugeY+gaugeH/2-(2.405/6)*(gaugeH-8)-4;
+    ctx.save();ctx.strokeStyle='rgba(244,63,94,.5)';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(gaugeX-22,smY);ctx.lineTo(gaugeX+22,smY);ctx.stroke();ctx.restore();
+    label(ctx,'SM',gaugeX,smY-6,'rgba(244,63,94,.5)',9);
+
+    t++;
+  }
+  loop();
+};
+
+/* ─────────────────────────────────────────────
+   14. CARRIER GENERATION & RECOMBINATION
+───────────────────────────────────────────── */
+INIT.carrier=function(){
+  const cv=$('simCanvas'),ctx=cv.getContext('2d');
+  let intensity=1.0,t=0;
+  const pairs=[];
+
+  const p=ctrlPanel; p.innerHTML='<div class="cp-head">Parameters</div>';
+  p.appendChild(mkOuts([['Generation rate G','cg-g'],['Carriers (norm.)','cg-n'],['Recombination rate','cg-r']]));
+  p.appendChild(mkSlider('cg-int','LIGHT INTENSITY',0,2,.01,1,'× sun',2,v=>{intensity=v;}));
+  p.appendChild(mkFbox('G = α·I / hν','G: generation rate [cm⁻³s⁻¹]. Recombination R = Δn/τ (τ = carrier lifetime).'));
+  p.appendChild(mkThy('CARRIER GEN & RECOMB','When light strikes a semiconductor, photons with energy > bandgap generate electron-hole pairs. This photogeneration rate G depends on the absorption coefficient and light intensity.<br><br>Excess carriers eventually recombine (radiatively → photon emitted, as in LEDs; or non-radiatively → heat). At steady state G = R.'));
+
+  // Init pairs
+  function addPair(){
+    if(pairs.length>60) return;
+    const W=cv.width,H=cv.height;
+    pairs.push({
+      x:W*.2+Math.random()*W*.6, y:H*.3+Math.random()*H*.4,
+      ex:0,ey:0,hx:0,hy:0,
+      vex:(Math.random()-.5)*1.5,vey:(Math.random()-.5)*1.5,
+      vhx:-(Math.random()-.5)*1.5,vhy:(Math.random()-.5)*1.5,
+      age:0,life:150+Math.random()*100,
+      born:t,recombined:false,recombT:0,
+    });
+  }
+
+  function loop(){
+    if(curMod!=='carrier') return;
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Background semiconductor lattice dots
+    const gsp=30;
+    for(let x=gsp;x<W;x+=gsp){
+      for(let y=gsp;y<H;y+=gsp){
+        ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);
+        ctx.fillStyle='rgba(100,116,139,.2)';ctx.fill();
+      }
+    }
+
+    // Photon rain
+    if(intensity>0 && t%Math.max(2,Math.round(8/intensity))===0) addPair();
+
+    // Draw falling photons as small streaks
+    const nph=Math.round(intensity*4);
+    for(let i=0;i<nph;i++){
+      const px=W*.2+Math.random()*W*.6;
+      const py=20+Math.random()*H*.25;
+      ctx.save();ctx.strokeStyle='rgba(255,220,50,.4)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+15);ctx.stroke();ctx.restore();
+    }
+
+    let alive=0;
+    pairs.forEach(pr=>{
+      if(pr.recombined){
+        // Flash
+        const dt=t-pr.recombT;
+        if(dt<20){
+          const a=(1-dt/20)*.8;
+          ctx.save();ctx.beginPath();ctx.arc(pr.x+pr.ex,pr.y+pr.ey,dt*1.5,0,Math.PI*2);
+          ctx.strokeStyle=`rgba(255,200,0,${a})`;ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
+        }
+        return;
+      }
+      pr.age++;pr.ex+=pr.vex;pr.ey+=pr.vey;pr.hx+=pr.vhx;pr.hy+=pr.vhy;
+      // Bounce
+      if(pr.x+pr.ex<W*.18||pr.x+pr.ex>W*.82) pr.vex*=-1;
+      if(pr.y+pr.ey<H*.28||pr.y+pr.ey>H*.72) pr.vey*=-1;
+      if(pr.x+pr.hx<W*.18||pr.x+pr.hx>W*.82) pr.vhx*=-1;
+      if(pr.y+pr.hy<H*.28||pr.y+pr.hy>H*.72) pr.vhy*=-1;
+
+      const ex=pr.x+pr.ex,ey=pr.y+pr.ey;
+      const hx=pr.x+pr.hx,hy=pr.y+pr.hy;
+
+      // Check recombination (proximity)
+      if(Math.hypot(ex-hx,ey-hy)<10 || pr.age>pr.life){
+        pr.recombined=true; pr.recombT=t;
+        // Photon burst
+        for(let k=0;k<8;k++){
+          const a=k*Math.PI/4;
+          ctx.save();ctx.strokeStyle='rgba(255,200,0,.7)';ctx.lineWidth=1.5;ctx.shadowColor='#ffd700';ctx.shadowBlur=12;
+          ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex+20*Math.cos(a),ey+20*Math.sin(a));ctx.stroke();ctx.restore();
+        }
+        return;
+      }
+
+      alive++;
+      // Electron
+      ctx.save();ctx.beginPath();ctx.arc(ex,ey,5,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,212,255,.85)';ctx.shadowColor='#00d4ff';ctx.shadowBlur=12;ctx.fill();
+      label(ctx,'e⁻',ex,ey-9,'rgba(0,212,255,.8)',9);
+      ctx.restore();
+      // Hole
+      ctx.save();ctx.beginPath();ctx.arc(hx,hy,5,0,Math.PI*2);
+      ctx.fillStyle='rgba(244,63,94,.85)';ctx.shadowColor='#f43f5e';ctx.shadowBlur=12;ctx.fill();
+      label(ctx,'h⁺',hx,hy-9,'rgba(244,63,94,.8)',9);
+      ctx.restore();
+      // Link line
+      ctx.save();ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(hx,hy);ctx.stroke();ctx.restore();
+    });
+
+    // Remove old recombined
+    const toRm=pairs.filter(p=>p.recombined&&(t-p.recombT)>30);
+    toRm.forEach(p=>pairs.splice(pairs.indexOf(p),1));
+
+    // Outputs
+    const G=intensity*2.5e17;
+    set('cg-g',(G/1e17).toFixed(2)+'×10¹⁷ cm⁻³s⁻¹');
+    set('cg-n',alive.toString());
+    set('cg-r',(alive>0?'Active':'Idle'),alive>0?'warn':'good');
+
+    // Labels
+    label(ctx,'Semiconductor lattice',W/2,H-30,'rgba(100,116,139,.35)',10);
+    label(ctx,'☀ Photon bombardment',W/2,40,'rgba(255,220,50,.45)',11);
+
+    t++; animId=requestAnimationFrame(loop);
+  }
+  loop();
+};
+
+/* ══════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════ */
+buildGrid();
+
+function buildGrid(){
+  const g=$('modGrid'); if(!g) return; g.innerHTML='';
+  MODS.forEach((m,i)=>{
+    const c=document.createElement('div');
+    c.className='mod-card';
+    c.innerHTML=`<span class="mc-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="mc-ico" style="background:${m.c}18;color:${m.c}">${m.ico}</div>
+      <div class="mc-title">${m.t}</div>
+      <div class="mc-desc">${m.d}</div>
+      <div class="mc-frm">${m.f}</div>`;
+    c.addEventListener('click',()=>loadMod(m.id));
+    g.appendChild(c);
+  });
+}
+</script>
+</body>
+</html>
