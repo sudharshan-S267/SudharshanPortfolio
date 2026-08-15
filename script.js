@@ -336,6 +336,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8.3 Projects Data
   const PROJECTS_DATA = [
     {
+      id: "optics",
+      title: "Optical Physics Educational Suite",
+      category: "dev",
+      type: "Education UI",
+      visualClass: "visual-physics",
+      icon: "fa-solid fa-lightbulb",
+      tags: ["HTML5", "CSS3", "JavaScript", "Bootstrap"],
+      shortDesc: "An interactive educational site detailing fundamental principles of optical physics. Developed using semantic HTML, native CSS layouts, Bootstrap grids, and JavaScript elements.",
+      problemSolved: "Abstract physics equations are often difficult to visualize. This web suite provides visual guides and interactive optic module demonstrations.",
+      features: [
+        "Interactive optical module demonstrations",
+        "Formula breakdowns & ray optics diagrams",
+        "Responsive multi-page design for tablets and mobile"
+      ],
+      github: "https://github.com/sudharshan-s267/Optical-Physics-Suite",
+      demo: "optics-suite.html",
+      featured: true
+    },
+    {
       id: "wayfinder",
       title: "KPRIET WayFinder",
       category: "dev",
@@ -412,25 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
       github: "https://github.com/sudharshan-s267/Banking-Management-System",
       demo: "YOUR_BANKING_SYSTEM_DEMO_URL",
       featured: false
-    },
-    {
-      id: "optics",
-      title: "Optical Physics Educational Suite",
-      category: "dev",
-      type: "Education UI",
-      visualClass: "visual-physics",
-      icon: "fa-solid fa-lightbulb",
-      tags: ["HTML5", "CSS3", "JavaScript", "Bootstrap"],
-      shortDesc: "An interactive educational site detailing fundamental principles of optical physics. Developed using semantic HTML, native CSS layouts, Bootstrap grids, and JavaScript elements.",
-      problemSolved: "Abstract physics equations are often difficult to visualize. This web suite provides visual guides and interactive optic module demonstrations.",
-      features: [
-        "Interactive optical module demonstrations",
-        "Formula breakdowns & ray optics diagrams",
-        "Responsive multi-page design for tablets and mobile"
-      ],
-      github: "https://github.com/sudharshan-s267/Optical-Physics-Suite",
-      demo: "optics-suite.html",
-      featured: false
     }
   ];
 
@@ -449,18 +449,10 @@ document.addEventListener('DOMContentLoaded', () => {
           ? proj.tags.map(t => `<span>${t}</span>`).join('')
           : '';
 
-        const githubBtnHTML = githubUrl
-          ? `<a href="${githubUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon-link" aria-label="View GitHub code for ${proj.title}"><i class="fa-brands fa-github"></i> Code</a>`
-          : '';
-
         const demoBtnHTML = demoUrl
           ? `<a href="${demoUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon-link" aria-label="Open live demo for ${proj.title}"><i class="fa-solid fa-arrow-up-right-from-square"></i> Demo</a>`
           : '';
 
-        // NOTE: No 'fade-up' class here — dynamic cards injected after the
-        // IntersectionObserver is set up are never observed, causing opacity:0.
-        // Cards are visible immediately; the parent section wrapper handles the
-        // scroll-reveal for the overall grid container.
         cardHTMLParts.push(`
           <article class="glass-card project-card" data-category="${proj.category || 'other'}" data-project-id="${proj.id || ''}">
             <div class="project-visual ${proj.visualClass || 'visual-default'}">
@@ -475,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn-details-trigger" data-project-id="${proj.id || ''}" aria-label="View details for ${proj.title}">
                   <i class="fa-solid fa-circle-info"></i> View Details
                 </button>
-                ${githubBtnHTML}
                 ${demoBtnHTML}
               </div>
             </div>
