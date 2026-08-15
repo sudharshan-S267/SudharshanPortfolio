@@ -1,0 +1,6 @@
+Portfolio actual https://sudharshan-s267.github.io/SudharshanPortfolio/
+Portfolio semantic and SEO https://sudharshan-s267.github.io/myportfolioSEO/
+Portfolio GRID https://sudharshan-s267.github.io/PortfolioGrid/
+weather app https://sudharshan-s267.github.io/Simple-weather-/
+Calculator https://sudharshan-s267.github.io/Calculator/
+Optical Physics suite https://optical-physics-suite.lovable.app

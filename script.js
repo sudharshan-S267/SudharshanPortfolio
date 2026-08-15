@@ -527,8 +527,8 @@ document.addEventListener('DOMContentLoaded', () => {
       issuer: "MathWorks",
       date: "YOUR_MATLAB_DATE",
       description: "Hands-on learning course covering data analysis, visualization, and core MATLAB programming concepts.",
-      image: "YOUR_MATLAB_IMAGE_URL",
-      link: "YOUR_MATLAB_CERTIFICATE_URL"
+      image: "",
+      link: "assets/Certificates/matlab-onramp.pdf"
     },
     {
       id: "stats-onramp",
@@ -536,8 +536,8 @@ document.addEventListener('DOMContentLoaded', () => {
       issuer: "MathWorks",
       date: "YOUR_STATS_DATE",
       description: "Foundational statistics, exploratory data analysis, and probability distributions using MATLAB.",
-      image: "YOUR_STATS_IMAGE_URL",
-      link: "YOUR_STATS_CERTIFICATE_URL"
+      image: "",
+      link: "assets/Certificates/statistics-onramp.pdf"
     },
     {
       id: "fortinet-nse1",
@@ -545,8 +545,8 @@ document.addEventListener('DOMContentLoaded', () => {
       issuer: "Fortinet",
       date: "YOUR_NSE1_DATE",
       description: "Essential cybersecurity principles, threat awareness, network safety, and cloud security fundamentals.",
-      image: "YOUR_NSE1_IMAGE_URL",
-      link: "YOUR_NSE1_CERTIFICATE_URL"
+      image: "",
+      link: "assets/Certificates/nse1.pdf"
     },
     {
       id: "fortinet-nse2",
@@ -554,8 +554,8 @@ document.addEventListener('DOMContentLoaded', () => {
       issuer: "Fortinet",
       date: "YOUR_NSE2_DATE",
       description: "Next Generation Firewall (NGFW) concepts, network security architecture, and threat mitigation.",
-      image: "YOUR_NSE2_IMAGE_URL",
-      link: "YOUR_NSE2_CERTIFICATE_URL"
+      image: "",
+      link: "assets/Certificates/nse2.pdf"
     },
     {
       id: "deloitte-analytics",
@@ -563,18 +563,34 @@ document.addEventListener('DOMContentLoaded', () => {
       issuer: "Deloitte",
       date: "YOUR_DELOITTE_DATE",
       description: "Practical data analytics job simulation involving dataset exploration, forensic analysis, and business dashboard insights.",
-      image: "YOUR_DELOITTE_IMAGE_URL",
-      link: "YOUR_DELOITTE_CERTIFICATE_URL"
+      image: "",
+      link: "assets/Certificates/deloitte-data-analytics.pdf"
     }
   ];
+
 
   function renderCertifications() {
     const grid = document.getElementById('certifications-grid');
     if (!grid) return;
 
     grid.innerHTML = CERTIFICATIONS_DATA.map((cert) => {
-      const certDate = getSafeValue(cert.date, "Verified Credential");
-      const hasValidUrl = cert.link && !cert.link.startsWith("YOUR_");
+      const certDate = getSafeValue(cert.date, 'Verified Credential');
+      // A valid link is any non-empty string that doesn't start with YOUR_
+      const hasValidUrl = cert.link && cert.link.trim() !== '' && !cert.link.startsWith('YOUR_');
+
+      const actionBtn = hasValidUrl
+        ? `<a
+             href="${cert.link}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="cert-btn"
+             aria-label="Open ${cert.title} certificate PDF"
+           >
+             <i class="fa-solid fa-file-pdf"></i> View Certificate
+           </a>`
+        : `<button class="cert-btn cert-btn-disabled" disabled aria-disabled="true" aria-label="Certificate not yet available">
+             <i class="fa-solid fa-clock"></i> Coming Soon
+           </button>`;
 
       return `
         <div class="glass-card cert-card">
@@ -585,20 +601,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="cert-date">${certDate}</div>
             <p class="cert-desc" style="margin-top:0.75rem;">${cert.description}</p>
           </div>
-          <button class="cert-btn btn-view-cert" data-cert-id="${cert.id}">
-            <i class="fa-solid fa-eye"></i> ${hasValidUrl ? 'View Certificate' : 'Certificate Details'}
-          </button>
+          ${actionBtn}
         </div>
       `;
     }).join('');
-
-    document.querySelectorAll('.btn-view-cert').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const certId = btn.getAttribute('data-cert-id');
-        openCertificateModal(certId);
-      });
-    });
   }
+
 
   // 8.5 Achievements Data (3 Confirmed Achievements)
   const ACHIEVEMENTS_DATA = [
