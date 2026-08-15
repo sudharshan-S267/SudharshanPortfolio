@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const formSubmitBtn = document.getElementById('form-submit-btn');
 
   // Google Apps Script Form Submission URL
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwRkfQhpY4Hsrc4bFmBk4rkjgayKGIHJlATYYJhShF0nqrLinjm9mGCmzgzcGdt2R3/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby56d4SMl8Y8ahON4a3eu4qPVBflh7BdvrQQXj6ZmBbQzdUIgQwiT9UlcX0sFuA-zDL/exec';
 
   // Role Typist Configuration
   const ROLES = [
