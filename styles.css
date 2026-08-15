@@ -969,6 +969,9 @@ ul {
 }
 
 /* Gorgeous CSS Illustrations for visual backups */
+.visual-wayfinder {
+  background: linear-gradient(135deg, #0d9488 0%, #0c4a6e 100%);
+}
 .visual-physics {
   background: linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%);
 }
@@ -980,6 +983,9 @@ ul {
 }
 .visual-bi {
   background: linear-gradient(135deg, #b45309 0%, #451a03 100%);
+}
+.visual-default {
+  background: linear-gradient(135deg, #5b21b6 0%, #1e1b4b 100%);
 }
 
 .project-illustration-decor {

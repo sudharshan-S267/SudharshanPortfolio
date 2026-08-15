@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelectorAll('.nav-link');
   const sections = document.querySelectorAll('section[id]');
   const fadeElements = document.querySelectorAll('.fade-up');
+
+  // Helper: re-observe newly injected .fade-up elements after dynamic rendering
+  function observeNewFadeElements(container) {
+    if (!container) return;
+    container.querySelectorAll('.fade-up:not(.visible)').forEach((el) => {
+      fadeObserver.observe(el);
+    });
+  }
   const typedEl = document.getElementById('typed-text');
 
   // Contact Form Elements
@@ -430,41 +438,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('projects-grid');
     if (!grid) return;
 
-    grid.innerHTML = PROJECTS_DATA.map((proj) => {
-      const githubUrl = getSafeValue(proj.github, "https://github.com/sudharshan-s267");
-      const demoUrl = getSafeValue(proj.demo, "#");
-      const isDemoAvailable = demoUrl !== "#";
+    // Build cards with per-project error isolation
+    const cardHTMLParts = [];
+    PROJECTS_DATA.forEach((proj) => {
+      try {
+        const githubUrl = (proj.github && !proj.github.startsWith('YOUR_')) ? proj.github : null;
+        const demoUrl   = (proj.demo   && !proj.demo.startsWith('YOUR_')   && proj.demo !== '#') ? proj.demo : null;
 
-      return `
-        <article class="glass-card project-card fade-up" data-category="${proj.category}">
-          <div class="project-visual ${proj.visualClass}">
-            <span class="project-type-tag">${proj.type}</span>
-            <div class="project-illustration-decor"><i class="${proj.icon}"></i></div>
-          </div>
-          <div class="project-info">
-            <div class="project-tags">
-              ${proj.tags.map(t => `<span>${t}</span>`).join('')}
+        const tagsHTML = Array.isArray(proj.tags) && proj.tags.length
+          ? proj.tags.map(t => `<span>${t}</span>`).join('')
+          : '';
+
+        const githubBtnHTML = githubUrl
+          ? `<a href="${githubUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon-link" aria-label="View GitHub code for ${proj.title}"><i class="fa-brands fa-github"></i> Code</a>`
+          : '';
+
+        const demoBtnHTML = demoUrl
+          ? `<a href="${demoUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon-link" aria-label="Open live demo for ${proj.title}"><i class="fa-solid fa-arrow-up-right-from-square"></i> Demo</a>`
+          : '';
+
+        // NOTE: No 'fade-up' class here — dynamic cards injected after the
+        // IntersectionObserver is set up are never observed, causing opacity:0.
+        // Cards are visible immediately; the parent section wrapper handles the
+        // scroll-reveal for the overall grid container.
+        cardHTMLParts.push(`
+          <article class="glass-card project-card" data-category="${proj.category || 'other'}" data-project-id="${proj.id || ''}">
+            <div class="project-visual ${proj.visualClass || 'visual-default'}">
+              <span class="project-type-tag">${proj.type || 'Project'}</span>
+              <div class="project-illustration-decor"><i class="${proj.icon || 'fa-solid fa-code'}"></i></div>
             </div>
-            <h3 class="project-title">${proj.title}</h3>
-            <p class="project-desc">${proj.shortDesc}</p>
-
-            <div class="project-actions">
-              <button class="btn-details-trigger" data-project-id="${proj.id}">
-                <i class="fa-solid fa-circle-info"></i> View Details
-              </button>
-              <a href="${githubUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon-link">
-                <i class="fa-brands fa-github"></i> Code
-              </a>
-              ${isDemoAvailable ? `<a href="${demoUrl}" target="_blank" rel="noopener noreferrer" class="btn-icon-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Demo</a>` : ''}
+            <div class="project-info">
+              ${tagsHTML ? `<div class="project-tags">${tagsHTML}</div>` : ''}
+              <h3 class="project-title">${proj.title || 'Untitled Project'}</h3>
+              <p class="project-desc">${proj.shortDesc || proj.description || ''}</p>
+              <div class="project-actions">
+                <button class="btn-details-trigger" data-project-id="${proj.id || ''}" aria-label="View details for ${proj.title}">
+                  <i class="fa-solid fa-circle-info"></i> View Details
+                </button>
+                ${githubBtnHTML}
+                ${demoBtnHTML}
+              </div>
             </div>
-          </div>
-        </article>
-      `;
-    }).join('');
+          </article>
+        `);
+      } catch (err) {
+        console.warn('[renderProjects] Skipped a project due to error:', err, proj);
+      }
+    });
 
-    // Re-bind Projects category filters
+    grid.innerHTML = cardHTMLParts.join('');
+
+    // Bind filter buttons
     const projectFilterButtons = document.querySelectorAll('.projects-filter .filter-btn');
-    const projectCards = document.querySelectorAll('.project-card');
+    const projectCards         = document.querySelectorAll('#projects-grid .project-card');
 
     projectFilterButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -476,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         projectCards.forEach((card) => {
           const category = card.getAttribute('data-category');
           if (filter === 'all' || category === filter) {
-            card.style.display = 'flex';
+            card.style.display = '';
           } else {
             card.style.display = 'none';
           }
@@ -485,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Bind "View Details" Modal Triggers
-    document.querySelectorAll('.btn-details-trigger').forEach((btn) => {
+    document.querySelectorAll('#projects-grid .btn-details-trigger').forEach((btn) => {
       btn.addEventListener('click', () => {
         const projId = btn.getAttribute('data-project-id');
         openProjectModal(projId);
@@ -805,7 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
 
       case 'resume':
-        responseHTML = `<div class="term-output term-success"><p>Resume configuration key: RESUME_URL. Click 'View Resume' button in top Hero section.</p></div>`;
+        responseHTML = `<div class="term-output term-success"><p>Resume not yet configured. Contact via <strong>25cs267@kpriet.ac.in</strong> to request a copy.</p></div>`;
         break;
 
       case 'clear':
@@ -949,4 +975,14 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProjects();
   renderCertifications();
   renderAchievements();
+
+  // Re-observe any .fade-up elements inside dynamically rendered grids
+  // (static .fade-up wrappers are already observed above at line 104)
+  [
+    document.getElementById('experience-timeline'),
+    document.getElementById('skills-grid'),
+    document.getElementById('projects-grid'),
+    document.getElementById('certifications-grid'),
+    document.getElementById('achievements-grid')
+  ].forEach(observeNewFadeElements);
 });
